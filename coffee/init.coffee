@@ -4,15 +4,30 @@ $ ->
   chart = d3.select("#canvas")
             .append("svg:svg")
   path = d3.geo.path().projection(xy)
-
-  d3.json "/map", (collection) ->
-    chart.selectAll("path")
-      .data(collection.features)
-      .enter().append("svg:path")
-      .attr("d", path)
-      .append("svg:title")
-      .text((d) -> d.properties.name)
-
+  
+  
+  collection = dvl.json2 {
+    url: "/map"
+    fn: (data) -> return data
+  }
+  
+  dvl.register {
+    listen: [collection]
+    fn: ->
+      col = collection.get()
+      return null if not col?
+      
+      chart.selectAll("path")
+        .data(col.features)
+        .enter().append("svg:path")
+        .attr("d", path)
+        .append("svg:title")
+        .text((d) -> d.properties.name)
+      null
+  }
+  
+  
+  
   
   i = 0
   $("#scale").slider {
