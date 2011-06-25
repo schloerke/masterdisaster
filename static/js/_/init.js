@@ -1,8 +1,12 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, i, increment_time, path, status, time, timeMax, timeMin, xy;
+    var allow_increment, chart, collection, i, increment_time, path, status, time, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
+    translate = xy.translate();
+    translate[0] = 450;
+    translate[1] = 285;
+    xy.translate(translate);
     chart = d3.select("#canvas").append("svg:svg");
     path = d3.geo.path().projection(xy);
     timeMin = 1950;
@@ -64,7 +68,7 @@
       }
     });
     i = 0;
-    return $("#scale").slider({
+    $("#scale").slider({
       min: timeMin,
       max: timeMax,
       value: 500,
@@ -73,5 +77,7 @@
         return time.set(ui.value).notify();
       }
     });
+    $("#play").click(play);
+    return $("#pause").click(pause);
   });
 }).call(this);
