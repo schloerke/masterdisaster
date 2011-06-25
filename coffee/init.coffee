@@ -1,10 +1,55 @@
 
 $ ->
-
+  
+  status = {}
+  
   xy = d3.geo.mercator().scale(1200)
   chart = d3.select("#canvas")
             .append("svg:svg")
   path = d3.geo.path().projection(xy)
+  
+  
+  
+  timeMin = 1950
+  timeMax = 2010
+  time = dvl.def(timeMin, "time")
+  allow_increment = dvl.def(false, "allow_increment")
+  
+  dvl.html.out {
+    selector: "#scale_label"
+    data:     time
+    format: (d) -> return d
+  }
+  
+  
+  increment_time = ->
+    
+    t = time.get()
+    if t is timeMax
+      pause()
+    else
+      t += 1
+      time.set(t).notify()
+    
+  
+  window.play = ->
+    status.interval = setInterval(increment_time, 1000)
+    null
+  window.pause = ->
+    status.interval = clearInterval(status.interval)
+    null
+    
+  dvl.register {
+    listen: [time]
+    fn: ->
+      t = time.get()
+      $("#scale").slider("option", "value", t)
+      null
+  }
+  
+  
+  
+  
   
   
   collection = dvl.json2 {
@@ -28,17 +73,13 @@ $ ->
   }
   
   
-  
-  
   i = 0
   $("#scale").slider {
-    min:    0
-    max:    3000
+    min:    timeMin
+    max:    timeMax
     value:  500
     step:   1
     slide:  (event, ui) ->
-      # TODO: animate time
-      null
-      console.log("oh hai! - #{i++}")
+      time.set(ui.value).notify()
   }
   

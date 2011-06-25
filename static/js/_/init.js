@@ -1,9 +1,48 @@
 (function() {
   $(function() {
-    var chart, collection, i, path, xy;
+    var allow_increment, chart, collection, i, increment_time, path, status, time, timeMax, timeMin, xy;
+    status = {};
     xy = d3.geo.mercator().scale(1200);
     chart = d3.select("#canvas").append("svg:svg");
     path = d3.geo.path().projection(xy);
+    timeMin = 1950;
+    timeMax = 2010;
+    time = dvl.def(timeMin, "time");
+    allow_increment = dvl.def(false, "allow_increment");
+    dvl.html.out({
+      selector: "#scale_label",
+      data: time,
+      format: function(d) {
+        return d;
+      }
+    });
+    increment_time = function() {
+      var t;
+      t = time.get();
+      if (t === timeMax) {
+        return pause();
+      } else {
+        t += 1;
+        return time.set(t).notify();
+      }
+    };
+    window.play = function() {
+      status.interval = setInterval(increment_time, 1000);
+      return null;
+    };
+    window.pause = function() {
+      status.interval = clearInterval(status.interval);
+      return null;
+    };
+    dvl.register({
+      listen: [time],
+      fn: function() {
+        var t;
+        t = time.get();
+        $("#scale").slider("option", "value", t);
+        return null;
+      }
+    });
     collection = dvl.json2({
       url: "/map",
       fn: function(data) {
@@ -26,12 +65,12 @@
     });
     i = 0;
     return $("#scale").slider({
-      min: 0,
-      max: 3000,
+      min: timeMin,
+      max: timeMax,
       value: 500,
       step: 1,
       slide: function(event, ui) {
-        null;        return console.log("oh hai! - " + (i++));
+        return time.set(ui.value).notify();
       }
     });
   });
