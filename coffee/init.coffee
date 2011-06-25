@@ -81,3 +81,15 @@ $ ->
     slide:  (event, ui) ->
       time.set(ui.value).notify()
   }
+  
+  
+  instrument_graph {
+    data:     data
+    selector: '#time_graph'
+    type:     'line'
+    whats:    ['total']
+    humanize: false
+    rawPadding: rawPadding
+    duration: duration
+  }
+  

@@ -64,7 +64,7 @@
       }
     });
     i = 0;
-    return $("#scale").slider({
+    $("#scale").slider({
       min: timeMin,
       max: timeMax,
       value: 500,
@@ -72,6 +72,15 @@
       slide: function(event, ui) {
         return time.set(ui.value).notify();
       }
+    });
+    return instrument_graph({
+      data: data,
+      selector: '#time_graph',
+      type: 'line',
+      whats: ['total'],
+      humanize: false,
+      rawPadding: rawPadding,
+      duration: duration
     });
   });
 }).call(this);
