@@ -1,4 +1,3 @@
-
 $ ->
   
   status = {}
@@ -82,4 +81,3 @@ $ ->
     slide:  (event, ui) ->
       time.set(ui.value).notify()
   }
-  
