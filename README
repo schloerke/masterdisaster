@@ -1,0 +1,9 @@
+
+Install Node
+    make init
+
+Setup env
+    source make/bash-exports
+    
+Start server
+    s # s... for start!
