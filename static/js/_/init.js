@@ -1,8 +1,12 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, i, increment_time, path, status, time, timeMax, timeMin, xy;
+    var allow_increment, chart, collection, i, increment_time, path, status, time, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
+    translate = xy.translate();
+    translate[0] = 450;
+    translate[1] = 285;
+    xy.translate(translate);
     chart = d3.select("#canvas").append("svg:svg");
     path = d3.geo.path().projection(xy);
     timeMin = 1950;
@@ -44,9 +48,19 @@
       }
     });
     collection = dvl.json2({
-      url: "/map",
-      fn: function(data) {
-        return data;
+      url: "/map"
+    });
+    window.gdp = dvl.json2({
+      url: "/gdp",
+      fn: function(d) {
+        var row, _i, _len, _ref, _results;
+        _ref = d.rows;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          row = _ref[_i];
+          _results.push(null);
+        }
+        return _results;
       }
     });
     dvl.register({
@@ -63,6 +77,16 @@
         return null;
       }
     });
+    dvl.register({
+      listen: [gdp],
+      fn: function() {
+        var col;
+        col = gdp.get();
+        if (!(col != null)) {
+          return null;
+        }
+      }
+    });
     i = 0;
     $("#scale").slider({
       min: timeMin,
@@ -73,7 +97,7 @@
         return time.set(ui.value).notify();
       }
     });
-    return instrument_graph({
+    instrument_graph({
       data: data,
       selector: '#time_graph',
       type: 'line',
@@ -82,5 +106,7 @@
       rawPadding: rawPadding,
       duration: duration
     });
+    $("#play").click(play);
+    return $("#pause").click(pause);
   });
 }).call(this);
