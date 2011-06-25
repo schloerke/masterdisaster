@@ -1,13 +1,28 @@
 (function() {
   $(function() {
-    var chart, i, path, xy;
+    var chart, collection, i, path, xy;
     xy = d3.geo.mercator().scale(1200);
     chart = d3.select("#canvas").append("svg:svg");
     path = d3.geo.path().projection(xy);
-    d3.json("/map", function(collection) {
-      return chart.selectAll("path").data(collection.features).enter().append("svg:path").attr("d", path).append("svg:title").text(function(d) {
-        return d.properties.name;
-      });
+    collection = dvl.json2({
+      url: "/map",
+      fn: function(data) {
+        return data;
+      }
+    });
+    dvl.register({
+      listen: [collection],
+      fn: function() {
+        var col;
+        col = collection.get();
+        if (!(col != null)) {
+          return null;
+        }
+        chart.selectAll("path").data(col.features).enter().append("svg:path").attr("d", path).append("svg:title").text(function(d) {
+          return d.properties.name;
+        });
+        return null;
+      }
     });
     i = 0;
     return $("#scale").slider({
