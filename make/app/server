@@ -1,0 +1,4 @@
+#!/bin/bash
+. env.sh
+
+exec coffee --compile --bare "$@" -o _app/_/ _app/*/*.coffee

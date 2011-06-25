@@ -1,0 +1,8 @@
+#!/bin/bash -e
+. env.sh
+
+dir="`dirname "$0"`"
+
+$dir/app/static
+$dir/app/server
+$dir/app/app

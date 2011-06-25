@@ -1,0 +1,8 @@
+#!/bin/bash
+. env.sh
+
+dir="`dirname "$0"`"
+
+$dir/app/static   --watch &
+$dir/app/server   --watch &
+$dir/app/app      --watch &

@@ -1,0 +1,4 @@
+#!/bin/bash
+. env.sh
+
+exec coffee --compile "$@" -o static/js/_/ coffee/*.coffee

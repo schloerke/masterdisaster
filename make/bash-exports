@@ -1,0 +1,65 @@
+#!/bin/bash
+. env.sh
+
+__git_ps1 ()
+{
+  local g="$(git rev-parse --git-dir 2>/dev/null)"
+  if [ -n "$g" ]; then
+    local r
+    local b
+    if [ -d "$g/../.dotest" ]
+    then
+      r="|AM/REBASE"
+      b="$(git symbolic-ref HEAD 2>/dev/null)"
+    elif [ -f "$g/.dotest-merge/interactive" ]
+    then
+      r="|REBASE-i"
+      b="$(cat $g/.dotest-merge/head-name)"
+    elif [ -d "$g/.dotest-merge" ]
+    then
+      r="|REBASE-m"
+      b="$(cat $g/.dotest-merge/head-name)"
+    elif [ -f "$g/MERGE_HEAD" ]
+    then
+      r="|MERGING"
+      b="$(git symbolic-ref HEAD 2>/dev/null)"
+    else
+      if [ -f $g/BISECT_LOG ]
+      then
+        r="|BISECTING"
+      fi
+      if ! b="$(git symbolic-ref HEAD 2>/dev/null)"
+      then
+        b="$(cut -c1-7 $g/HEAD)..."
+      fi
+    fi
+
+    if [ -n "$1" ]; then
+      printf "$1" "${b##refs/heads/}$r"
+    else
+      printf " (%s)" "${b##refs/heads/}$r"
+    fi
+  fi
+}
+
+# export PS1='`__git_ps1 "[%s] "`\W: '
+
+## put in your '.profile' file, then it wont matter when we change dirs and move things around. This file will be updated once and everyone is still happy.
+# alias go_to_dash='cd ~/Dropbox/metamarkets/gitMMX/dash/dash/'
+# alias load_dash_exports='source bash_exports.sh'
+# alias open_dash_project='open ~/Dropbox/metamarkets/gitMMX/dash/_dash.tmproj'
+# alias d='go_to_dash; load_dash_exports; eval "coffee_all";'
+
+coffee_all() {
+  make init
+  make/watch
+  sleep 1.5
+  git gc
+  echo Dash Branches
+  git branch -a
+}
+
+s() {
+  clear
+  node app.js
+}

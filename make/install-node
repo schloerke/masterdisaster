@@ -1,0 +1,29 @@
+#!/bin/bash -e
+. env.sh
+
+NODE_VERSION="v0.4.8"
+NODE_URL="http://nodejs.org/dist/node-$NODE_VERSION.tar.gz"
+NPM_URL='http://npmjs.org/install.sh'
+NODE_DIR="`pwd`/node"
+echo $NODE_URL
+echo $NODE_DIR
+echo $NODE_VERSION
+
+if [ -d "$NODE_DIR" ]; then
+  echo "node already installed: $NODE_DIR"
+  exit
+fi
+
+mkdir -p $NODE_DIR/src
+(
+  set -e
+  cd $NODE_DIR/src
+  curl "$NODE_URL" | tar xzvf -
+  cd node-$NODE_VERSION
+  ./configure --prefix=$NODE_DIR
+  make -j4
+  make install
+)
+rm -fr $NODE_DIR/src
+
+curl $NPM_URL | clean=yes sh

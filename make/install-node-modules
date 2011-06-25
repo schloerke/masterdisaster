@@ -1,0 +1,34 @@
+#!/bin/bash -e
+. env.sh
+
+NPM_INSTALL='npm install --force'
+
+installed() {
+  name="$1"
+  version="$2"
+  npm ls -lp | grep "`pwd`/node_modules/$name:$name@$version:" >/dev/null
+}
+
+while read name version flags; do
+  if [ -n "$name" ]; then
+    if [ -z "$flags" ] && installed $name $version; then
+      echo "Skipping $name@$version, already installed"
+    else
+      cmd="$NPM_INSTALL $name@$version $flags"
+      echo
+      echo $cmd
+      $cmd
+      echo
+    fi
+  fi
+done <<EOF
+
+  coffee-script   1.1.1
+  colors          0.5.0
+  ejs             0.4.2
+  express         2.3.10
+  forever         0.5.6
+  tav             0.1.0
+  
+
+EOF
