@@ -48,9 +48,19 @@
       }
     });
     collection = dvl.json2({
-      url: "/map",
-      fn: function(data) {
-        return data;
+      url: "/map"
+    });
+    window.gdp = dvl.json2({
+      url: "/gdp",
+      fn: function(d) {
+        var row, _i, _len, _ref, _results;
+        _ref = d.rows;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          row = _ref[_i];
+          _results.push(null);
+        }
+        return _results;
       }
     });
     dvl.register({
@@ -65,6 +75,16 @@
           return d.properties.name;
         });
         return null;
+      }
+    });
+    dvl.register({
+      listen: [gdp],
+      fn: function() {
+        var col;
+        col = gdp.get();
+        if (!(col != null)) {
+          return null;
+        }
       }
     });
     i = 0;

@@ -37,6 +37,8 @@ app.all( '/',   (req, res, next) -> res.render("test"))
 
 mapInfo = JSON.parse(fs.readFileSync("data/world-countries.json"))
 app.all( "/map", (req, res, next) -> res.send(mapInfo))
+gdpInfo = JSON.parse(fs.readFileSync("data/gdp_pop.json"))
+app.all( "/gdp", (req, res, next) -> res.send(gdpInfo))
 
 app.all(  '/*',   (req, res, next)-> res.redirect("/"))
 

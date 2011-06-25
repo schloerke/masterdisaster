@@ -57,7 +57,13 @@ $ ->
   
   collection = dvl.json2 {
     url: "/map"
-    fn: (data) -> return data
+  }
+ 
+  window.gdp = dvl.json2 {
+    url: "/gdp"
+    fn: (d) ->
+      for row in d.rows
+        null
   }
   
   dvl.register {
@@ -74,8 +80,14 @@ $ ->
         .text((d) -> d.properties.name)
       null
   }
-  
-  
+
+  dvl.register {
+    listen: [gdp]
+    fn: ->
+      col = gdp.get()
+      return null if not col?
+  }
+
   i = 0
   $("#scale").slider {
     min:    timeMin
