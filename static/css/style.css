@@ -37,4 +37,7 @@ path {
   stroke-width: .75px;
   fill: #999;
 }
-
+#scale {
+float:left;
+width:80%;
+}
