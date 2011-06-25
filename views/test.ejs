@@ -1,12 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html>
   <head>
-
     <title>What a disaster!</title>
+    <script type="text/javascript" src="/js/dvl/d3.js"></script>
+    <script type="text/javascript" src="/js/dvl/d3.geo.js"></script>
+    <script type="text/javascript" src="/js/jq/jquery-1.4.4.js"></script>
+    <script type="text/javascript" src="/js/dvl/protovis-r3.2.js"></script>
+    <script type="text/javascript" src="/js/dvl/sprintf.js"></script>
+    <script type="text/javascript" src="/js/dvl/dvl.js"></script>
+    <script type="text/coffeescript">
+      console.log('eur');
+      xy = d3.geo.mercator().scale(1200)
+        chart = d3.select("body")
+          .append("svg:svg")
+        path = d3.geo.path().projection(xy)
+
+        d3.json "/data/worldmap.json", (collection) ->
+          chart.selectAll("path")
+            .data(collection.features)
+            .enter().append("svg:path")
+            .attr("d", path)
+            .append("svg:title")
+            .text((d) -> d.properties.name)
+
+    </script>
+    <style type="text/css">
+    svg {
+      width: 960px;
+      height: 600px;
+    }
+
+    path {
+      stroke: #fff;
+      stroke-width: .25px;
+    }
+    </style>
   </head>
-  
   <body>
-    <center><img src='/images/computer.jpg'></center>
+    
   </body>
-  
 </html>
