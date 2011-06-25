@@ -33,8 +33,12 @@ app.dynamicHelpers {
 }
 
 # Test
-app.all(  '/*',   (req, res, next)-> res.redirect("/"))
 app.all( '/',   (req, res, next) -> res.render("test"))
+
+mapInfo = JSON.parse(fs.readFileSync("data/world-countries.json"))
+app.all( "/map", (req, res, next) -> res.send(mapInfo))
+
+app.all(  '/*',   (req, res, next)-> res.redirect("/"))
 
 
 # Start!

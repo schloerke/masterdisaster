@@ -2,28 +2,13 @@
 <html>
   <head>
     <title>What a disaster!</title>
+    <script type="text/javascript" src="/js/jq/jquery-1.4.4.js"></script>
     <script type="text/javascript" src="/js/dvl/d3.js"></script>
     <script type="text/javascript" src="/js/dvl/d3.geo.js"></script>
-    <script type="text/javascript" src="/js/jq/jquery-1.4.4.js"></script>
     <script type="text/javascript" src="/js/dvl/protovis-r3.2.js"></script>
     <script type="text/javascript" src="/js/dvl/sprintf.js"></script>
     <script type="text/javascript" src="/js/dvl/dvl.js"></script>
-    <script type="text/coffeescript">
-      console.log('eur');
-      xy = d3.geo.mercator().scale(1200)
-        chart = d3.select("body")
-          .append("svg:svg")
-        path = d3.geo.path().projection(xy)
-
-        d3.json "/data/worldmap.json", (collection) ->
-          chart.selectAll("path")
-            .data(collection.features)
-            .enter().append("svg:path")
-            .attr("d", path)
-            .append("svg:title")
-            .text((d) -> d.properties.name)
-
-    </script>
+    <script type="text/javascript" src="/js/_/init.js"></script>
     <style type="text/css">
     svg {
       width: 960px;

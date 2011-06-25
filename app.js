@@ -1,4 +1,4 @@
-var app, express, fs, opts, port;
+var app, express, fs, mapInfo, opts, port;
 fs = require('fs');
 opts = require('tav').set();
 port = opts.port != null ? opts.port : 8080;
@@ -27,11 +27,15 @@ app.dynamicHelpers({
     return true;
   }
 });
-app.all('/*', function(req, res, next) {
-  return res.redirect("/");
-});
 app.all('/', function(req, res, next) {
   return res.render("test");
+});
+mapInfo = JSON.parse(fs.readFileSync("data/world-countries.json"));
+app.all("/map", function(req, res, next) {
+  return res.send(mapInfo);
+});
+app.all('/*', function(req, res, next) {
+  return res.redirect("/");
 });
 app.listen(port);
 console.log('Express app started on port ' + port);
