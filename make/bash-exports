@@ -58,6 +58,7 @@ coffee_all() {
   echo Dash Branches
   git branch -a
 }
+coffee_all
 
 s() {
   clear
