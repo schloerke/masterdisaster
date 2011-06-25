@@ -41,7 +41,7 @@ $ ->
   window.pause = ->
     status.interval = clearInterval(status.interval)
     null
-    
+  
   dvl.register {
     listen: [time]
     fn: ->
