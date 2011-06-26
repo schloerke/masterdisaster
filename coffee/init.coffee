@@ -167,7 +167,7 @@ $ ->
       
       t = ({country: k, count: v} for k,v of max).sort((a,b) -> b.count - a.count)
       
-      return (tmp.country for tmp in t)[0...50]
+      return (tmp.country for tmp in t)[0...40]
   }
 
   maxDisasters = dvl.apply {
@@ -184,7 +184,7 @@ $ ->
       
       t = ({type: k, count: v} for k,v of max).sort((a,b) -> b.count - a.count)
       
-      return (tmp.type for tmp in t)[0...50]
+      return (tmp.type for tmp in t)[0...40]
   }
   
   # allData = dvl.apply {

@@ -181,7 +181,7 @@
             _results.push(tmp.country);
           }
           return _results;
-        })()).slice(0, 50);
+        })()).slice(0, 40);
       }
     });
     maxDisasters = dvl.apply({
@@ -222,7 +222,7 @@
             _results.push(tmp.type);
           }
           return _results;
-        })()).slice(0, 50);
+        })()).slice(0, 40);
       }
     });
     window.yearAll = dvl.apply({

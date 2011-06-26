@@ -57,7 +57,7 @@ window.heatmap = {
       numberFormater: pv.identity
       getScale: (data, maxVal) ->
         
-        c = pv.Scale.log(1, maxVal).range("#DB817A", "#700B0B")
+        c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404")
         d = [
           5000000
           1000000
@@ -306,7 +306,7 @@ window.heatmap = {
         text: sx.ticks
         baseline: "top"
         align: "start"
-        angle: 55
+        angle: 90
         color: dvl.gen.equal(sx.ticks, highlightX, "#333", "#888")
       on:
         click: (i) ->

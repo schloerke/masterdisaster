@@ -54,7 +54,7 @@
         numberFormater: pv.identity,
         getScale: function(data, maxVal) {
           var c, d;
-          c = pv.Scale.log(1, maxVal).range("#DB817A", "#700B0B");
+          c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404");
           d = [5000000, 1000000, 500000, 100000, 50000, 10000, 5000, 1000];
           c.legendTicks = function() {
             var ret, t, u, _i, _len;
@@ -286,7 +286,7 @@
           text: sx.ticks,
           baseline: "top",
           align: "start",
-          angle: 55,
+          angle: 90,
           color: dvl.gen.equal(sx.ticks, highlightX, "#333", "#888")
         },
         on: {
