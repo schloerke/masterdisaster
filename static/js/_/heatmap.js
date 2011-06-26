@@ -305,8 +305,8 @@
           text: sx.ticks,
           baseline: "top",
           align: "start",
-          angle: 45,
-          color: dvl.gen.equal(sx.ticks, highlightX, "red", "black")
+          angle: 55,
+          color: dvl.gen.equal(sx.ticks, highlightX, "#333", "#666")
         },
         on: {
           click: function(i) {
@@ -332,7 +332,7 @@
           text: sy.ticks,
           align: "end",
           baseline: "middle",
-          color: dvl.gen.equal(sy.ticks, highlightY, "red", "black")
+          color: dvl.gen.equal(sy.ticks, highlightY, "#333", "#666")
         },
         on: {
           click: function(i) {
@@ -399,7 +399,7 @@
           width: 20,
           height: 20,
           fill: dvl.gen.fromArray(legendTicks, dvl.acc('value'), colorScale),
-          stroke: "#ccc"
+          stroke: "none"
         }
       });
       dvl.svg.labels({
@@ -436,7 +436,7 @@
           text: xTitle,
           baseline: "top",
           align: "middle",
-          color: "black"
+          color: "#666"
         }
       });
       yTitle = dvl.def("Country");
@@ -455,7 +455,7 @@
           baseline: "middle",
           align: "right",
           angle: -90,
-          color: "black"
+          color: "#666"
         }
       });
       return {

@@ -307,8 +307,8 @@ window.heatmap = {
         text: sx.ticks
         baseline: "top"
         align: "start"
-        angle: 45
-        color: dvl.gen.equal(sx.ticks, highlightX, "red", "black")
+        angle: 55
+        color: dvl.gen.equal(sx.ticks, highlightX, "#333", "#666")
       on:
         click: (i) ->
           if onclick?.xLabel?
@@ -331,7 +331,7 @@ window.heatmap = {
         text: sy.ticks
         align: "end"
         baseline: "middle"
-        color: dvl.gen.equal(sy.ticks, highlightY, "red", "black")
+        color: dvl.gen.equal(sy.ticks, highlightY, "#333", "#666")
       on:
         click: (i) ->
           if onclick?.yLabel?
@@ -417,7 +417,7 @@ window.heatmap = {
         width: 20
         height: 20
         fill: dvl.gen.fromArray(legendTicks, dvl.acc('value'), colorScale)
-        stroke: "#ccc"
+        stroke: "none"
     }
     
     dvl.svg.labels {
@@ -454,7 +454,7 @@ window.heatmap = {
         baseline: "top"
         align: "middle"
         # angle: 45
-        color: "black" # dvl.gen.equal(sx.ticks, highlightX, "red", "black")
+        color: "#666"
     }
 
     # Y Title
@@ -474,7 +474,7 @@ window.heatmap = {
         baseline: "middle"
         align: "right"
         angle: -90
-        color: "black" # dvl.gen.equal(sx.ticks, highlightX, "red", "black")
+        color: "#666"
     }
     
     
