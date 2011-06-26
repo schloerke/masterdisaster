@@ -15,7 +15,7 @@ $ ->
   
   timeMin = 1950
   timeMax = 2010
-  time = dvl.def(timeMin, "time")
+  window.time = dvl.def(timeMin, "time")
   allow_increment = dvl.def(false, "allow_increment")
   
   dvl.html.out {
@@ -73,18 +73,19 @@ $ ->
       return newGdp
   }
 
-  gdp = dvl.apply {
+  window.gdp = dvl.apply {
     args: [gdptemp, collection]
     fn: (g, col) ->
       for year,val of g
         for country,countryval of val
           for feature in col.features
             if country is feature.properties.name
+              countryval.svgObj = feature
               break
       return g
   }
  
-  yearData = dvl.apply {
+  window.yearData = dvl.apply {
     args: [gdp, time]
     fn: (g,t) ->
       return g[t]
@@ -95,7 +96,9 @@ $ ->
     fn: ->
       yd = yearData.get()
       return null if not yd?
-      svgs = (val.svgObj for key,val of yd)
+      o.ut(true, "yd: ", yd)
+      
+      window.svgs = (val.svgObj for key,val of yd)
       chart.selectAll("path")
         .data(svgs)
         .enter().append("svg:path")

@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, gdp, gdptemp, i, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
+    var allow_increment, chart, collection, gdptemp, i, increment_time, path, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -11,7 +11,7 @@
     path = d3.geo.path().projection(xy);
     timeMin = 1950;
     timeMax = 2010;
-    time = dvl.def(timeMin, "time");
+    window.time = dvl.def(timeMin, "time");
     allow_increment = dvl.def(false, "allow_increment");
     dvl.html.out({
       selector: "#scale_label",
@@ -68,7 +68,7 @@
         return newGdp;
       }
     });
-    gdp = dvl.apply({
+    window.gdp = dvl.apply({
       args: [gdptemp, collection],
       fn: function(g, col) {
         var country, countryval, feature, val, year, _i, _len, _ref;
@@ -80,6 +80,7 @@
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               feature = _ref[_i];
               if (country === feature.properties.name) {
+                countryval.svgObj = feature;
                 break;
               }
             }
@@ -88,7 +89,7 @@
         return g;
       }
     });
-    yearData = dvl.apply({
+    window.yearData = dvl.apply({
       args: [gdp, time],
       fn: function(g, t) {
         return g[t];
@@ -97,12 +98,13 @@
     dvl.register({
       listen: [yearData],
       fn: function() {
-        var key, svgs, val, yd;
+        var key, val, yd;
         yd = yearData.get();
         if (!(yd != null)) {
           return null;
         }
-        svgs = (function() {
+        o.ut(true, "yd: ", yd);
+        window.svgs = (function() {
           var _results;
           _results = [];
           for (key in yd) {
