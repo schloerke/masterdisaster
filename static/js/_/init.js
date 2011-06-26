@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, gdptemp, i, increment_time, path, status, timeMax, timeMin, translate, xy;
+    var allow_increment, chart, collection, gdptemp, i, increment_time, path, quantize, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -111,9 +111,7 @@
             svgs.push(val.svgObj);
           }
         }
-        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).attr("class", "blue").append("svg:title").text(function(d) {
-          return d.properties.name;
-        });
+        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).attr("class", quantize).append("svg:title");
         return null;
       }
     });
@@ -151,6 +149,12 @@
       }
     });
     $("#play").click(play);
-    return $("#pause").click(pause);
+    $("#pause").click(pause);
+    return quantize = function(d) {
+      return console.log('wur');
+      /*
+           return ("q" + Math.min(8, ~~(d.rgdpch * 9 / 12)) + "-9")
+          */
+    };
   });
 }).call(this);

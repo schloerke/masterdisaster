@@ -106,9 +106,8 @@ $ ->
         .data(svgs)
         .enter().append("svg:path")
         .attr("d", path)
-        .attr("class", "blue")
+        .attr("class", quantize)
         .append("svg:title")
-        .text((d) -> d.properties.name)
       null
   }
 
@@ -146,3 +145,9 @@ $ ->
 
   $("#play").click(play)
   $("#pause").click(pause)
+
+  quantize = (d) ->
+    console.log 'wur' 
+    ###
+     return ("q" + Math.min(8, ~~(d.rgdpch * 9 / 12)) + "-9")
+    ###
