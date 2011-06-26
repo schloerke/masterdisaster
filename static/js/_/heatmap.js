@@ -212,6 +212,11 @@
         $("button.killed").attr("title", "Number of Deaths");
         $("button.affected").attr("title", "Number of Property or Physical Loss");
         $("button.cost").attr("title", "Estimated Cost of Event ");
+        $("#buttons").find("button").click(function() {
+          $(".selected").removeClass("selected");
+          return $(this).addClass("selected");
+        });
+        $("button.killed").addClass("selected");
         controls.append("span").text(" | ");
         controls.append("button").attr("class", "heatmap_button").attr("title", "Group points according to each country's disasters over the whole time range.").text("cluster").on("click", function() {
           var c;

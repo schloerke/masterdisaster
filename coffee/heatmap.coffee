@@ -239,6 +239,10 @@ window.heatmap = {
       $("button.affected").attr("title", "Number of Property or Physical Loss")
       $("button.cost").attr("title", "Estimated Cost of Event ")
         
+      $("#buttons").find("button").click ->
+        $(".selected").removeClass("selected")
+        $(this).addClass("selected")
+      $("button.killed").addClass("selected")
       controls.append("span").text(" | ");
       
     

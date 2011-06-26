@@ -18,6 +18,16 @@ color:#666;
 margin:0;
 padding-top:5px;
 font-weight:normal;
+float:left;
+}
+h2 {
+font-size:14px;
+line-height:23px;
+text-transform:uppercase;
+color:#666;
+font-weight:normal;
+float:left;
+padding-left:6px;
 }
 button {
 background:#ddd;
@@ -87,13 +97,13 @@ g.heatmap_x_title .labels, g.heatmap_y_title .labels {
 #buttons span {
 color:#666;
 }
-button.killed.active {
+button.killed.selected {
 background:#C47777;
 }
-button.affected.active {
+button.affected.selected {
   background: #848CA0;
 }
-button.cost.active {
+button.cost.selected {
 background: #64BA7E;
 }
 svg rect {
