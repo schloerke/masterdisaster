@@ -102,11 +102,29 @@ $ ->
       for key,val of yd
         if val.svgObj?
           svgs.push(val.svgObj)
-      chart.selectAll("path")
+      
+      
+      
+      chart.selectAll("path.blue")
         .data(svgs)
         .enter().append("svg:path")
         .attr("d", path)
-        .attr("class", quantize)
+        .attr("class", "blue")
+        .attr("")
+        .append("svg:title")
+
+      chart.selectAll("path.blue")
+        .data(svgs)
+        .append("svg:path")
+        .attr("d", path)
+        .attr("class", "blue")
+        .append("svg:title")
+
+      chart.selectAll("path.blue")
+        .data(svgs)
+        .exit().append("svg:path")
+        .attr("d", path)
+        .attr("class", "blue")
         .append("svg:title")
       null
   }

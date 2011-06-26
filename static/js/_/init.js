@@ -111,7 +111,9 @@
             svgs.push(val.svgObj);
           }
         }
-        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).attr("class", quantize).append("svg:title");
+        chart.selectAll("path.blue").data(svgs).enter().append("svg:path").attr("d", path).attr("class", "blue").attr("").append("svg:title");
+        chart.selectAll("path.blue").data(svgs).append("svg:path").attr("d", path).attr("class", "blue").append("svg:title");
+        chart.selectAll("path.blue").data(svgs).exit().append("svg:path").attr("d", path).attr("class", "blue").append("svg:title");
         return null;
       }
     });
