@@ -104,16 +104,14 @@
           return null;
         }
         o.ut(true, "yd: ", yd);
-        window.svgs = (function() {
-          var _results;
-          _results = [];
-          for (key in yd) {
-            val = yd[key];
-            _results.push(val.svgObj);
+        window.svgs = [];
+        for (key in yd) {
+          val = yd[key];
+          if (val.svgObj != null) {
+            svgs.push(val.svgObj);
           }
-          return _results;
-        })();
-        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).append("svg:title").attr("class", "blue").text(function(d) {
+        }
+        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).attr("class", "blue").append("svg:title").text(function(d) {
           return d.properties.name;
         });
         return null;

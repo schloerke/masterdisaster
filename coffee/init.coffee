@@ -98,13 +98,16 @@ $ ->
       return null if not yd?
       o.ut(true, "yd: ", yd)
       
-      window.svgs = (val.svgObj for key,val of yd)
+      window.svgs = []
+      for key,val of yd
+        if val.svgObj?
+          svgs.push(val.svgObj)
       chart.selectAll("path")
         .data(svgs)
         .enter().append("svg:path")
         .attr("d", path)
-        .append("svg:title")
         .attr("class", "blue")
+        .append("svg:title")
         .text((d) -> d.properties.name)
       null
   }
@@ -114,7 +117,7 @@ $ ->
     fn: ->
       window.col = collection.get()
       return null if not col?
-      
+      # return null
       chart.selectAll("path")
         .data(col.features)
         .enter().append("svg:path")
