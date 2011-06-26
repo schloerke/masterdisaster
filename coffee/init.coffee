@@ -59,7 +59,7 @@ $ ->
     url: "/map"
   }
  
-  gdp = dvl.json2 {
+  gdptemp = dvl.json2 {
     url: "/gdp"
     fn: (d) ->
       newGdp = {}
@@ -72,6 +72,17 @@ $ ->
         }
       return newGdp
   }
+
+  window.gdp = dvl.apply {
+    args: [gdptemp, collection]
+    fn: (g, col) ->
+      for year,val of g
+        for country,countryval of val
+          for feature in col.features
+            if country is feature.properties.name
+              break
+      return g
+  }
  
   yearData = dvl.apply {
     args: [gdp, time]
@@ -79,12 +90,10 @@ $ ->
       return g[t]
   }
 
-  dvl.debug "ourdata", yearData
-
   dvl.register {
     listen: [collection]
     fn: ->
-      col = collection.get()
+      window.col = collection.get()
       return null if not col?
       
       chart.selectAll("path")

@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, gdp, i, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
+    var allow_increment, chart, collection, gdptemp, i, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -50,7 +50,7 @@
     collection = dvl.json2({
       url: "/map"
     });
-    gdp = dvl.json2({
+    gdptemp = dvl.json2({
       url: "/gdp",
       fn: function(d) {
         var newGdp, row, _i, _len, _name, _ref;
@@ -68,19 +68,37 @@
         return newGdp;
       }
     });
+    window.gdp = dvl.apply({
+      args: [gdptemp, collection],
+      fn: function(g, col) {
+        var country, countryval, feature, val, year, _i, _len, _ref;
+        for (year in g) {
+          val = g[year];
+          for (country in val) {
+            countryval = val[country];
+            _ref = col.features;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              feature = _ref[_i];
+              if (country === feature.properties.name) {
+                break;
+              }
+            }
+          }
+        }
+        return g;
+      }
+    });
     yearData = dvl.apply({
       args: [gdp, time],
       fn: function(g, t) {
         return g[t];
       }
     });
-    dvl.debug("ourdata", yearData);
     dvl.register({
       listen: [collection],
       fn: function() {
-        var col;
-        col = collection.get();
-        if (!(col != null)) {
+        window.col = collection.get();
+        if (!(typeof col !== "undefined" && col !== null)) {
           return null;
         }
         chart.selectAll("path").data(col.features).enter().append("svg:path").attr("d", path).append("svg:title").text(function(d) {
