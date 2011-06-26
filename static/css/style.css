@@ -1,40 +1,60 @@
 body {
 font-size:14px;
-font-family:"Ariel", "Helvetica", sans-serif;
+font-family:"Arial", "Helvetica", sans-serif;
 margin:0;
 background:#f2f2f2;
 }
 label {
 font-size:12px;
+float:left;
+font-family:"Georgia", "Times new roman", serif;
+font-style:italic;
+line-height:24px;
+margin-right:8px;
 }
 h1 {
 text-transform:uppercase;
 color:#666;
 margin:0;
 padding-top:5px;
+font-weight:normal;
 }
-.wrapper {
-width:980px;
+button {
+background:#ddd;
+border:0;
+outline:0;
+-moz-border-radius:2px;
+border-radius:2px;
+padding:3px 8px;
+cursor:pointer;
+}
+button:hover {
+background:#ccc;
+}
+header, footer {
+width:760px;
 margin:0 auto;
 position:relative;
 }
-#canvas {
-/*  height:500px;*/
-  width:100%;
-  margin-bottom:10px;
+footer {
+padding-bottom:20px;
 }
-
+#canvas {
+width:1080px;
+margin:0 auto 10px;
+}
 #scale_label {
 position:absolute;
 right:0;
-top:0;
-font-size:80px;
+top:-13px;
+font-size:97px;
 color:#ccc;
-font-family:"impact", ariel, helvetica,sans-serif;
+font-family:"Impact", arial, helvetica,sans-serif;
 }
 #scale {
 float:left;
 width:80%;
+margin:5px 10px;
 }
     .helvetica{font-family:helvetica,arial,freesans,clean,sans-serif;}
     .inconsolata{font-family:"inconsolata-1","inconsolata-2",monospace;}
@@ -43,9 +63,11 @@ width:80%;
     .inline-blocks{display:inline-block;margin:0;display:inline;}
     .opaque{opacity:1;filter:"alpha(opacity=100)";-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";}
     .transparent{opacity:0;filter:"alpha(opacity=0)";-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";}
-    svg.heatmap .background{fill:transparent;display:block;}
+    svg.heatmap .background{
+      fill:#efefef;
+      display:block;}
     svg.heatmap .lines{shape-rendering:crispEdges;}
-    .heatmap_button{margin-top:10px;margin-left:10px;}
+    .heatmap_button{margin-left:10px;}
 .heatmap_x_title,.heatmap_y_title{
 font-size:12px;
 text-transform:uppercase;
@@ -54,6 +76,8 @@ color:#666;
 .labels {
 font-size:12px;
 font-family:arial,sans-serif;
+fill:#666;
 }
-    
-
+button.killed {
+background:#C47777;
+}
