@@ -33,7 +33,7 @@ svg {
   height:500px;
 }
 path.blue {
-color:#4401bb;
+fill:#4401bb;
 }
 path {
   stroke: #fff;
