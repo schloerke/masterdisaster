@@ -41,7 +41,7 @@ $ ->
   window.pause = ->
     status.interval = clearInterval(status.interval)
     null
-  
+    
   dvl.register {
     listen: [time]
     fn: ->
@@ -62,8 +62,15 @@ $ ->
   window.gdp = dvl.json2 {
     url: "/gdp"
     fn: (d) ->
+      newGdp = {}
       for row in d.rows
-        null
+        newGdp[row.year] or= {}
+        newGdp[row.year][row.country] = {
+          country_isocode: row["country isocode"]
+          pop: row.POP
+          rgdpch: row.rgdpch
+        }
+      return newGdp
   }
   
   dvl.register {
