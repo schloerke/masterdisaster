@@ -414,23 +414,24 @@ window.heatmap = {
     }
 
     sizeX = dvl.apply {
-      args: [data]
-      fn: (bs) ->
+      args: [data, val]
+      fn: (bs, v) ->
         k = []
         for b in bs
-          if b.killed <= 0
-            b.killed = 1
-          k.push(Math.log(b.killed)*3.5)
+          if b[v] < 1
+            b[v] = 1
+          console.log b[v]
+          k.push(Math.log(b[v])*3.5)
         return k
     }
     sizeY = dvl.apply {
-      args: [data]
-      fn: (bs) ->
+      args: [data, val]
+      fn: (bs, v) ->
         k = []
         for b in bs
-          if b.killed <= 0
-            b.killed = 1
-          k.push(Math.log(b.killed)*3.5)
+          if b[v] < 1
+            b[v] = 1
+          k.push(Math.log(b[v])*3.5)
         return k
     }
     keys = dvl.apply {

@@ -365,31 +365,32 @@
         }
       });
       sizeX = dvl.apply({
-        args: [data],
-        fn: function(bs) {
+        args: [data, val],
+        fn: function(bs, v) {
           var b, k, _i, _len;
           k = [];
           for (_i = 0, _len = bs.length; _i < _len; _i++) {
             b = bs[_i];
-            if (b.killed <= 0) {
-              b.killed = 1;
+            if (b[v] < 1) {
+              b[v] = 1;
             }
-            k.push(Math.log(b.killed) * 3.5);
+            console.log(b[v]);
+            k.push(Math.log(b[v]) * 3.5);
           }
           return k;
         }
       });
       sizeY = dvl.apply({
-        args: [data],
-        fn: function(bs) {
+        args: [data, val],
+        fn: function(bs, v) {
           var b, k, _i, _len;
           k = [];
           for (_i = 0, _len = bs.length; _i < _len; _i++) {
             b = bs[_i];
-            if (b.killed <= 0) {
-              b.killed = 1;
+            if (b[v] < 1) {
+              b[v] = 1;
             }
-            k.push(Math.log(b.killed) * 3.5);
+            k.push(Math.log(b[v]) * 3.5);
           }
           return k;
         }
