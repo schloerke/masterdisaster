@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, gdptemp, i, increment_time, path, quantize, status, timeMax, timeMin, translate, xy;
+    var allow_increment, chart, collection, increment_time, path, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -50,7 +50,7 @@
     collection = dvl.json2({
       url: "/map"
     });
-    gdptemp = dvl.json2({
+    window.gdp = dvl.json2({
       url: "/gdp",
       fn: function(d) {
         var newGdp, row, _i, _len, _name, _ref;
@@ -62,31 +62,10 @@
           newGdp[row.year][row.country] = {
             country_isocode: row["country isocode"],
             pop: row.POP,
-            rgdpch: row.rgdpch
+            rgdpch: row.rgdpch === "na" ? 0 : row.rgdpch
           };
         }
         return newGdp;
-      }
-    });
-    window.gdp = dvl.apply({
-      args: [gdptemp, collection],
-      fn: function(g, col) {
-        var country, countryval, feature, val, year, _i, _len, _ref;
-        for (year in g) {
-          val = g[year];
-          for (country in val) {
-            countryval = val[country];
-            _ref = col.features;
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              feature = _ref[_i];
-              if (country === feature.properties.name) {
-                countryval.svgObj = feature;
-                break;
-              }
-            }
-          }
-        }
-        return g;
       }
     });
     window.yearData = dvl.apply({
@@ -95,52 +74,49 @@
         return g[t];
       }
     });
-    dvl.register({
-      listen: [yearData],
-      fn: function() {
-        var key, val, yd;
-        yd = yearData.get();
-        if (!(yd != null)) {
-          return null;
+    window.all = dvl.json2({
+      url: "/all",
+      fn: function(d) {
+        var good, makeDate, ret, row, rows, _i, _j, _len, _len2, _name;
+        makeDate = function(dt) {
+          var y;
+          dt = "" + dt;
+          y = dt.substring(dt.length - 4);
+          return parseInt(y, 10);
+        };
+        rows = d.rows;
+        good = 0;
+        for (_i = 0, _len = rows.length; _i < _len; _i++) {
+          row = rows[_i];
+          row.startYear = makeDate(row.Start);
         }
-        o.ut(true, "yd: ", yd);
-        window.svgs = [];
-        for (key in yd) {
-          val = yd[key];
-          if (val.svgObj != null) {
-            svgs.push(val.svgObj);
+        ret = {};
+        for (_j = 0, _len2 = rows.length; _j < _len2; _j++) {
+          row = rows[_j];
+          if (row.startYear >= 1950) {
+            ret[_name = row.startYear] || (ret[_name] = []);
+            ret[row.startYear].push(row);
           }
         }
-        chart.selectAll("path.blue").data(svgs).enter().append("svg:path").attr("d", path).attr("class", "blue").attr("").append("svg:title");
-        chart.selectAll("path.blue").data(svgs).append("svg:path").attr("d", path).attr("class", "blue").append("svg:title");
-        chart.selectAll("path.blue").data(svgs).exit().append("svg:path").attr("d", path).attr("class", "blue").append("svg:title");
-        return null;
+        return ret;
       }
     });
-    dvl.register({
-      listen: [collection],
-      fn: function() {
-        window.col = collection.get();
-        if (!(typeof col !== "undefined" && col !== null)) {
-          return null;
+    window.get_all = function() {
+      var a, i, t, year, yearVal;
+      a = all.get();
+      t = {};
+      i = 0;
+      for (year in a) {
+        yearVal = a[year];
+        i++;
+        if (i > 5) {
+          break;
         }
-        chart.selectAll("path").data(col.features).enter().append("svg:path").attr("d", path).append("svg:title").text(function(d) {
-          return d.properties.name;
-        });
-        return null;
+        t[year] = yearVal;
       }
-    });
-    dvl.register({
-      listen: [gdp],
-      fn: function() {
-        var col;
-        col = gdp.get();
-        if (!(col != null)) {
-          return null;
-        }
-      }
-    });
-    i = 0;
+      return t;
+      return null;
+    };
     $("#scale").slider({
       min: timeMin,
       max: timeMax,
@@ -150,13 +126,11 @@
         return time.set(ui.value).notify();
       }
     });
-    $("#play").click(play);
-    $("#pause").click(pause);
-    return quantize = function(d) {
-      return console.log('wur');
-      /*
-           return ("q" + Math.min(8, ~~(d.rgdpch * 9 / 12)) + "-9")
-          */
-    };
+    $("#play").click(function() {
+      return play();
+    });
+    return $("#pause").click(function() {
+      return pause();
+    });
   });
 }).call(this);

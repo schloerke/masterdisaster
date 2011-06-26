@@ -1,4 +1,4 @@
-var app, disAll, express, fs, gdpInfo, mapInfo, opts, port;
+var app, disAll, express, fs, gdpInfo, opts, port;
 fs = require('fs');
 opts = require('tav').set();
 port = opts.port != null ? opts.port : 8080;
@@ -30,15 +30,11 @@ app.dynamicHelpers({
 app.all('/', function(req, res, next) {
   return res.render("test");
 });
-mapInfo = JSON.parse(fs.readFileSync("data/world-countries.json"));
-app.all("/map", function(req, res, next) {
-  return res.send(mapInfo);
-});
 gdpInfo = JSON.parse(fs.readFileSync("data/gdp_pop.json"));
 app.all("/gdp", function(req, res, next) {
   return res.send(gdpInfo);
 });
-disAll = fs.readFileSync("data/global-disaster-all.json");
+disAll = fs.readFileSync("data/global-disasters-post1950.json");
 app.all("/all", function(req, res, next) {
   return res.send(disAll);
 });

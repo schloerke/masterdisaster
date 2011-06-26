@@ -50,16 +50,11 @@ $ ->
       null
   }
   
-  
-  
-  
-  
-  
   collection = dvl.json2 {
     url: "/map"
   }
  
-  gdptemp = dvl.json2 {
+  window.gdp = dvl.json2 {
     url: "/gdp"
     fn: (d) ->
       newGdp = {}
@@ -68,90 +63,77 @@ $ ->
         newGdp[row.year][row.country] = {
           country_isocode: row["country isocode"]
           pop: row.POP
-          rgdpch: row.rgdpch
+          rgdpch: if row.rgdpch is "na" then 0 else row.rgdpch
         }
       return newGdp
   }
 
-  window.gdp = dvl.apply {
-    args: [gdptemp, collection]
-    fn: (g, col) ->
-      for year,val of g
-        for country,countryval of val
-          for feature in col.features
-            if country is feature.properties.name
-              countryval.svgObj = feature
-              break
-      return g
-  }
+  # window.gdp = dvl.apply {
+  #   args: [gdptemp, collection]
+  #   fn: (g, col) ->
+  #     for year,val of g
+  #       for country,countryval of val
+  #         for feature in col.features
+  #           if country is feature.properties.name
+  #             countryval.svgObj = feature
+  #             break
+  #     return g
+  # }
  
   window.yearData = dvl.apply {
     args: [gdp, time]
     fn: (g,t) ->
       return g[t]
   }
-
-  dvl.register {
-    listen: [yearData]
-    fn: ->
-      yd = yearData.get()
-      return null if not yd?
-      o.ut(true, "yd: ", yd)
+  
+  
+  window.all = dvl.json2 {
+    url: "/all"
+    fn: (d) ->
       
-      window.svgs = []
-      for key,val of yd
-        if val.svgObj?
-          svgs.push(val.svgObj)
+      makeDate = (dt) ->
+        dt = "" + dt
+        y = dt.substring(dt.length - 4)
+        return parseInt(y, 10)
+        
+      rows = d.rows
       
+      good = 0
+      for row in rows
+        # o.ut(true, "row: ", row)
+        # 
+        # o.ut(true, "row.End: ", row.End)
+        # row.endYear = makeDate(row.End)
+        row.startYear = makeDate(row.Start)
+        
+      ret = {}
+      for row in rows
+        if row.startYear >= 1950
+          ret[row.startYear] or= []
+          ret[row.startYear].push(row)
       
-      
-      chart.selectAll("path.blue")
-        .data(svgs)
-        .enter().append("svg:path")
-        .attr("d", path)
-        .attr("class", "blue")
-        .attr("")
-        .append("svg:title")
-
-      chart.selectAll("path.blue")
-        .data(svgs)
-        .append("svg:path")
-        .attr("d", path)
-        .attr("class", "blue")
-        .append("svg:title")
-
-      chart.selectAll("path.blue")
-        .data(svgs)
-        .exit().append("svg:path")
-        .attr("d", path)
-        .attr("class", "blue")
-        .append("svg:title")
-      null
+      return ret
   }
+  
+  window.get_all = ->
+    a = all.get()
+    
+    t = {}
+    i = 0
+    for year, yearVal of a
+      i++
+      break if i > 5
+      t[year] = yearVal
+    return t
+    null
+     
+  
+  
+  
+  
 
-  dvl.register {
-    listen: [collection]
-    fn: ->
-      window.col = collection.get()
-      return null if not col?
-      # return null
-      chart.selectAll("path")
-        .data(col.features)
-        .enter().append("svg:path")
-        .attr("d", path)
-        .append("svg:title")
-        .text((d) -> d.properties.name)
-      null
-  }
 
-  dvl.register {
-    listen: [gdp]
-    fn: ->
-      col = gdp.get()
-      return null if not col?
-  }
 
-  i = 0
   $("#scale").slider {
     min:    timeMin
     max:    timeMax
@@ -161,11 +143,6 @@ $ ->
       time.set(ui.value).notify()
   }
 
-  $("#play").click(play)
-  $("#pause").click(pause)
+  $("#play").click( -> play())
+  $("#pause").click( -> pause())
 
-  quantize = (d) ->
-    console.log 'wur'
-    ###
-     return ("q" + Math.min(8, ~~(d.rgdpch * 9 / 12)) + "-9")
-    ###

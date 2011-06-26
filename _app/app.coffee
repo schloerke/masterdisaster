@@ -35,13 +35,13 @@ app.dynamicHelpers {
 # Test
 app.all( '/',   (req, res, next) -> res.render("test"))
 
-mapInfo = JSON.parse(fs.readFileSync("data/world-countries.json"))
-app.all( "/map", (req, res, next) -> res.send(mapInfo))
+# mapInfo = JSON.parse(fs.readFileSync("data/world-countries.json"))
+# app.all( "/map", (req, res, next) -> res.send(mapInfo))
 
 gdpInfo = JSON.parse(fs.readFileSync("data/gdp_pop.json"))
 app.all( "/gdp", (req, res, next) -> res.send(gdpInfo))
 
-disAll = fs.readFileSync("data/global-disaster-all.json")
+disAll = fs.readFileSync("data/global-disasters-post1950.json")
 app.all( "/all", (req, res, next) -> res.send(disAll))
 
 app.all(  '/*',   (req, res, next)-> res.redirect("/"))
