@@ -88,7 +88,6 @@ $ ->
       return null if not col?
   }
 
-  i = 0
   $("#scale").slider {
     min:    timeMin
     max:    timeMax
@@ -97,17 +96,27 @@ $ ->
     slide:  (event, ui) ->
       time.set(ui.value).notify()
   }
-  
-  
-  instrument_graph {
-    data:     data
-    selector: '#time_graph'
-    type:     'line'
-    whats:    ['total']
-    humanize: false
-    rawPadding: rawPadding
-    duration: duration
-  }
-  
   $("#play").click(play)
   $("#pause").click(pause)
+  
+  
+  o.log("asdfasdf")
+  window.data = dvl.json2 {
+    url: "/all"
+    map: (d) ->
+      o.log("asdfasdf")
+      
+  }
+  o.log("asdfasdf")
+  
+  
+  # instrument_graph {
+  #   data:     data
+  #   selector: '#time_graph'
+  #   type:     'line'
+  #   whats:    ['total']
+  #   humanize: false
+  #   rawPadding: 10
+  #   duration: 1000
+  # }
+  # 

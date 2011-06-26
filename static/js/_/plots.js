@@ -1,6 +1,5 @@
 (function() {
-  var instrument_graph;
-  instrument_graph = function(_arg) {
+  window.instrument_graph = function(_arg) {
     var barWidth, data, duration, getX, getYs, humanize, main_number, margin, panel, rawPadding, scaledTicksX, scaledTicksY, selector, size, sx, sy, type, what, whats, yDomains, _i, _j, _k, _l, _len, _len2, _len3, _len4, _results;
     data = _arg.data, selector = _arg.selector, type = _arg.type, whats = _arg.whats, humanize = _arg.humanize, rawPadding = _arg.rawPadding, duration = _arg.duration;
     if (!(data != null)) {

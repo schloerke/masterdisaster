@@ -1,4 +1,4 @@
-instrument_graph = ({data, selector, type, whats, humanize, rawPadding, duration}) ->
+window.instrument_graph = ({data, selector, type, whats, humanize, rawPadding, duration}) ->
   if not data?        then throw "data must be included in a instrument_graph"
   if not selector?    then throw "selector must be included in a instrument_graph"
   if not type?        then throw "type must be included in a instrument_graph"
