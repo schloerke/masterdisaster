@@ -118,15 +118,17 @@ $ ->
         # row.endYear = makeDate(row.End)
         # row.startYear = makeDate(row.Start)
         start = makeDate(row.Start)
-        obj.push {
+        t = {
           start:    start
           country:  row.Country   or "Country"
           cost:     row.Cost      or 1
           killed:   row.Killed    or 1
           affected: row.Affected  or 1
           type:     (row.Sub_Type  or row.Type).toLowerCase()
-          key:      "#{row.Sub_Type  or row.Type}_#{row.Country   or "Country"}"
+          
         }
+        t.key = "#{t.type}_#{t.country}"
+        obj.push(t)
         
       
       ret = {}
