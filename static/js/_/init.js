@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, gdptemp, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
+    var allow_increment, chart, collection, gdp, gdptemp, i, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -68,7 +68,7 @@
         return newGdp;
       }
     });
-    window.gdp = dvl.apply({
+    gdp = dvl.apply({
       args: [gdptemp, collection],
       fn: function(g, col) {
         var country, countryval, feature, val, year, _i, _len, _ref;
@@ -95,6 +95,29 @@
       }
     });
     dvl.register({
+      listen: [yearData],
+      fn: function() {
+        var key, svgs, val, yd;
+        yd = yearData.get();
+        if (!(yd != null)) {
+          return null;
+        }
+        svgs = (function() {
+          var _results;
+          _results = [];
+          for (key in yd) {
+            val = yd[key];
+            _results.push(val.svgObj);
+          }
+          return _results;
+        })();
+        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).append("svg:title").text(function(d) {
+          return d.properties.name;
+        });
+        return null;
+      }
+    });
+    dvl.register({
       listen: [collection],
       fn: function() {
         window.col = collection.get();
@@ -117,6 +140,7 @@
         }
       }
     });
+    i = 0;
     $("#scale").slider({
       min: timeMin,
       max: timeMax,
@@ -127,14 +151,6 @@
       }
     });
     $("#play").click(play);
-    $("#pause").click(pause);
-    o.log("asdfasdf");
-    window.data = dvl.json2({
-      url: "/all",
-      map: function(d) {
-        return o.log("asdfasdf");
-      }
-    });
-    return o.log("asdfasdf");
+    return $("#pause").click(pause);
   });
 }).call(this);

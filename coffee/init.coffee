@@ -73,7 +73,7 @@ $ ->
       return newGdp
   }
 
-  window.gdp = dvl.apply {
+  gdp = dvl.apply {
     args: [gdptemp, collection]
     fn: (g, col) ->
       for year,val of g
@@ -88,6 +88,21 @@ $ ->
     args: [gdp, time]
     fn: (g,t) ->
       return g[t]
+  }
+
+  dvl.register {
+    listen: [yearData]
+    fn: ->
+      yd = yearData.get()
+      return null if not yd?
+      svgs = (val.svgObj for key,val of yd)
+      chart.selectAll("path")
+        .data(svgs)
+        .enter().append("svg:path")
+        .attr("d", path)
+        .append("svg:title")
+        .text((d) -> d.properties.name)
+      null
   }
 
   dvl.register {
@@ -112,6 +127,7 @@ $ ->
       return null if not col?
   }
 
+  i = 0
   $("#scale").slider {
     min:    timeMin
     max:    timeMax
@@ -120,27 +136,6 @@ $ ->
     slide:  (event, ui) ->
       time.set(ui.value).notify()
   }
+
   $("#play").click(play)
   $("#pause").click(pause)
-  
-  
-  o.log("asdfasdf")
-  window.data = dvl.json2 {
-    url: "/all"
-    map: (d) ->
-      o.log("asdfasdf")
-      
-  }
-  o.log("asdfasdf")
-  
-  
-  # instrument_graph {
-  #   data:     data
-  #   selector: '#time_graph'
-  #   type:     'line'
-  #   whats:    ['total']
-  #   humanize: false
-  #   rawPadding: 10
-  #   duration: 1000
-  # }
-  # 
