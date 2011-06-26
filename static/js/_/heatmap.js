@@ -365,15 +365,33 @@
         }
       });
       sizeX = dvl.apply({
-        args: sx.band,
-        fn: function(b) {
-          return 0.9 * b;
+        args: [data],
+        fn: function(bs) {
+          var b, k, _i, _len;
+          k = [];
+          for (_i = 0, _len = bs.length; _i < _len; _i++) {
+            b = bs[_i];
+            if (b.killed <= 0) {
+              b.killed = 1;
+            }
+            k.push(Math.log(b.killed) * 3.5);
+          }
+          return k;
         }
       });
       sizeY = dvl.apply({
-        args: sy.band,
-        fn: function(b) {
-          return 0.9 * b;
+        args: [data],
+        fn: function(bs) {
+          var b, k, _i, _len;
+          k = [];
+          for (_i = 0, _len = bs.length; _i < _len; _i++) {
+            b = bs[_i];
+            if (b.killed <= 0) {
+              b.killed = 1;
+            }
+            k.push(Math.log(b.killed) * 3.5);
+          }
+          return k;
         }
       });
       keys = dvl.apply({
