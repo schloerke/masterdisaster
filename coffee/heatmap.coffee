@@ -414,12 +414,24 @@ window.heatmap = {
     }
 
     sizeX = dvl.apply {
-      args: sx.band
-      fn: (b) -> return 0.9 * b
+      args: [data]
+      fn: (bs) ->
+        k = []
+        for b in bs
+          if b.killed <= 0
+            b.killed = 1
+          k.push(Math.log(b.killed)*3.5)
+        return k
     }
     sizeY = dvl.apply {
-      args: sy.band
-      fn: (b) -> return 0.9 * b
+      args: [data]
+      fn: (bs) ->
+        k = []
+        for b in bs
+          if b.killed <= 0
+            b.killed = 1
+          k.push(Math.log(b.killed)*3.5)
+        return k
     }
     keys = dvl.apply {
       args: [data, getX, getY]
