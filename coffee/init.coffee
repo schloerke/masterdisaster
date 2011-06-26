@@ -3,6 +3,10 @@ $ ->
   status = {}
   
   xy = d3.geo.mercator().scale(1200)
+  translate = xy.translate()
+  translate[0] = 450
+  translate[1] = 285
+  xy.translate(translate)
   chart = d3.select("#canvas")
             .append("svg:svg")
   path = d3.geo.path().projection(xy)
@@ -53,9 +57,30 @@ $ ->
   
   collection = dvl.json2 {
     url: "/map"
-    fn: (data) -> return data
   }
-  
+ 
+  gdp = dvl.json2 {
+    url: "/gdp"
+    fn: (d) ->
+      newGdp = {}
+      for row in d.rows
+        newGdp[row.year] or= {}
+        newGdp[row.year][row.country] = {
+          country_isocode: row["country isocode"]
+          pop: row.POP
+          rgdpch: row.rgdpch
+        }
+      return newGdp
+  }
+ 
+  yearData = dvl.apply {
+    args: [gdp, time]
+    fn: (g,t) ->
+      return g[t]
+  }
+
+  dvl.debug "ourdata", yearData
+
   dvl.register {
     listen: [collection]
     fn: ->
@@ -70,8 +95,14 @@ $ ->
         .text((d) -> d.properties.name)
       null
   }
-  
-  
+
+  dvl.register {
+    listen: [gdp]
+    fn: ->
+      col = gdp.get()
+      return null if not col?
+  }
+
   i = 0
   $("#scale").slider {
     min:    timeMin
@@ -81,3 +112,6 @@ $ ->
     slide:  (event, ui) ->
       time.set(ui.value).notify()
   }
+
+  $("#play").click(play)
+  $("#pause").click(pause)

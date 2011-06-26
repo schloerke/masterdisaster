@@ -1,4 +1,4 @@
-var app, express, fs, mapInfo, opts, port;
+var app, express, fs, gdpInfo, mapInfo, opts, port;
 fs = require('fs');
 opts = require('tav').set();
 port = opts.port != null ? opts.port : 8080;
@@ -33,6 +33,10 @@ app.all('/', function(req, res, next) {
 mapInfo = JSON.parse(fs.readFileSync("data/world-countries.json"));
 app.all("/map", function(req, res, next) {
   return res.send(mapInfo);
+});
+gdpInfo = JSON.parse(fs.readFileSync("data/gdp_pop.json"));
+app.all("/gdp", function(req, res, next) {
+  return res.send(gdpInfo);
 });
 app.all('/*', function(req, res, next) {
   return res.redirect("/");
