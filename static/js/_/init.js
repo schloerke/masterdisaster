@@ -138,11 +138,22 @@
       return t;
       return null;
     };
-    return window.yearAll = dvl.apply({
+    window.yearAll = dvl.apply({
       args: [all, time],
       fn: function(a, t) {
         return a[t];
       }
+    });
+    return heatmap.def({
+      graphSelector: '#canvas',
+      data: yearAll,
+      params: dvl.def({
+        x: "type",
+        y: "country"
+      }),
+      showVals: ["killed", "affected"],
+      metrics: [],
+      verbose: true
     });
   });
 }).call(this);

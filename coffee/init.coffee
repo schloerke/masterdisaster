@@ -157,7 +157,19 @@ $ ->
   }
   
   
-  
+  # def: ({graphSelector, buttonSelector, where, data, params, showVals, metrics, onclick, verbose}) ->  
+  heatmap.def {
+    graphSelector: '#canvas'
+    # buttonSelector: '#buttons'
+    data: yearAll
+    params: dvl.def {
+      x: "type"
+      y: "country"
+    }
+    showVals: ["killed", "affected"]
+    metrics: []
+    verbose: true
+  }
 
 
 

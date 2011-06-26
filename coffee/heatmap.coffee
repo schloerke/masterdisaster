@@ -1,5 +1,14 @@
+window.mmx = {}
 
-mmx.heatmap = {
+mmx.check = {}
+mmx.check.no_def = (value, title, classStr) ->
+  if not value?
+    throw new Error("Please include '#{ title }' when making a #{ classStr }")
+  return mmx.check
+
+
+
+window.heatmap = {
   
   clusterSort: ({xVals, yVals, valueVals}) ->
     xs = dvl.util.uniq(xVals)
@@ -147,28 +156,24 @@ mmx.heatmap = {
   
   constructor_count: 0
   
-  def: ({graphSelector, buttonSelector, where, data, params, showVals, metrics, onclick, verbose}) ->  
+  def: ({graphSelector, buttonSelector, data, params, showVals, onclick, verbose}) ->  
     verbose or= false
     
-    mmx.check.no_def(graphSelector, "graphSelector", "Heatmap")
+    # mmx.check.no_def(graphSelector, "graphSelector", "Heatmap")
     if not buttonSelector?
       o.log("buttonSelector is not defined... not placing buttons") if verbose
     else
       buttonSelector  = dvl.wrapConstIfNeeded(buttonSelector)
       
     
-    mmx.check.no_def(where,     "where",      "Heatmap")
     mmx.check.no_def(data,      "data",       "Heatmap")
     mmx.check.no_def(showVals,  "showVals",   "Heatmap")
-    mmx.check.no_def(metrics,   "metrics",    "Heatmap")
     mmx.check.no_def(params,    "params",     "Heatmap")
     
     
     # what is being displayed and what options does it have
     graphSelector   = dvl.wrapConstIfNeeded(graphSelector)
     showVals        = dvl.wrapConstIfNeeded(showVals)
-    metrics         = dvl.wrapConstIfNeeded(metrics)
-    
     
     
     x = dvl.apply {
@@ -326,13 +331,13 @@ mmx.heatmap = {
     scaledTicksY = dvl.gen.fromArray(sy.ticks, null, sy.scale)
     
     dvl.svg.lines {
-      panel: panel
+      panel:    panel
       duration: duration
       props:
-        key: sx.ticks
-        left: scaledTicksX
-        top1: 0
-        bottom2: 0
+        key:      sx.ticks
+        left:     scaledTicksX
+        top1:     0
+        bottom2:  0
     }
     
     dvl.svg.lines {
@@ -500,14 +505,15 @@ mmx.heatmap = {
     
     # X Title
     xTitle = dvl.apply {
-      args: [x, metrics]
-      fn: (xVal, ms) ->
-        o.ut(verbose, "xVal: ", xVal)
-        o.ut(verbose, "ms: ", ms)
-        for obj in ms
-          if xVal is obj.nameStr
-            return if obj.titleSingle? then obj.titleSingle else obj.title
-        return "Title not in metrics"
+      args: [x]
+      fn: (xVal) ->
+        return switch xVal
+          when "affected"
+            "Affected"
+          when "killed"
+            "Killed"
+          else
+            "you suck"
     }
     dvl.svg.labels {
       panel: panel
@@ -527,16 +533,8 @@ mmx.heatmap = {
     }
 
     # Y Title
-    yTitle = dvl.apply {
-      args: [y, metrics]
-      fn: (yVal, ms) ->
-        o.ut(verbose, "yVal: ", yVal)
-        o.ut(verbose, "ms: ", ms)
-        for obj in ms
-          if yVal is obj.nameStr
-            return if obj.titleSingle? then obj.titleSingle else obj.title
-        return "Title not in metrics"
-    }
+    yTitle = dvl.def("Country")
+    
     dvl.svg.labels {
       panel: panel
       classStr: "heatmap_y_title"
@@ -560,7 +558,6 @@ mmx.heatmap = {
     return {
       graphSelector
       buttonSelector
-      where
       data
       params
       showVals
