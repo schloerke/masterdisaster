@@ -26,7 +26,6 @@ $ ->
   
   
   increment_time = ->
-    
     t = time.get()
     if t is timeMax
       pause()
@@ -150,6 +149,7 @@ $ ->
      
   
   
+  
   window.yearAll = dvl.apply {
     args: [all, time]
     fn: (a, t)->
@@ -160,7 +160,7 @@ $ ->
   # def: ({graphSelector, buttonSelector, where, data, params, showVals, metrics, onclick, verbose}) ->  
   heatmap.def {
     graphSelector: '#canvas'
-    # buttonSelector: '#buttons'
+    buttonSelector: '#buttons'
     data: yearAll
     params: dvl.def {
       x: "type"

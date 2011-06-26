@@ -93,7 +93,7 @@
           f = function(d) {
             return d;
           };
-          c = pv.Scale.quantile(dataTmp, f).range("#fff", "#4A85B5").quantiles(5);
+          c = pv.Scale.quantile(dataTmp, f).range("#fff", "#663300").quantiles(5);
           c.legendTicks = function() {
             var i, l, q, v, _ref;
             l = [];

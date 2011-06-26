@@ -145,6 +145,7 @@
     });
     return heatmap.def({
       graphSelector: '#canvas',
+      buttonSelector: '#buttons',
       data: yearAll,
       params: dvl.def({
         x: "type",
