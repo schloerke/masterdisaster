@@ -154,7 +154,30 @@
       }),
       showVals: ["killed", "affected"],
       metrics: [],
-      verbose: true
+      verbose: true,
+      maxVals: dvl.apply({
+        args: [all],
+        fn: function(al) {
+          var countryObj, max, year, yearVal, _i, _len;
+          max = {
+            killed: 0,
+            affected: 0
+          };
+          for (year in al) {
+            yearVal = al[year];
+            for (_i = 0, _len = yearVal.length; _i < _len; _i++) {
+              countryObj = yearVal[_i];
+              if (countryObj.affected > max.affected) {
+                max.affected = countryObj.affected;
+              }
+              if (countryObj.killed > max.killed) {
+                max.killed = countryObj.killed;
+              }
+            }
+          }
+          return max;
+        }
+      })
     });
   });
 }).call(this);

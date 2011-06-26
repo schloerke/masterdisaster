@@ -55,26 +55,28 @@ window.heatmap = {
       prefix: ''
       postfix: ''
       numberFormater: pv.identity
-      getScale: (data) ->
+      getScale: (data, maxVal) ->
         
-        # TODO... didn't know how to subset in pv
-        dataTmp = data.map((d) -> return d.killed)
-        f = (d) -> return d
-              
-        c = pv.Scale.quantile(dataTmp, f).range("#fff", "#BC0F00").quantiles(5)
+        c = pv.Scale.log(1, maxVal).range("#fff", "#BC0F00")
+        d = [
+          5000000
+          1000000
+          500000
+          100000
+          50000
+          10000
+          5000
+          1000
+        ]
         c.legendTicks = ->
-          l = []
-          q = c.quantiles()
-          
-          for i in [(q.length-2)..0]
-            v = (q[i] + q[i+1]) / 2
-            l.push {
-              value: v
-              min: q[i]
-              max: q[i+1]
-              text: v #"$#{ v.toFixed(2) } (#{ (5-i) * 100 / 5 }%)"
+          ret = []
+          for t in d
+            ret.push {
+              value: t
+              text: t
             }
-          return l
+            
+          return ret
         c.between = false
         return c
         
@@ -83,26 +85,28 @@ window.heatmap = {
       prefix: ''
       postfix: ''
       numberFormater: pv.identity
-      getScale: (data) ->
+      getScale: (data, maxVal) ->
         
-        # TODO... didn't know how to subset in pv
-        dataTmp = data.map((d) -> return d.killed)
-        f = (d) -> return d
-        
-        c = pv.Scale.quantile(dataTmp, f).range("#fff", "#3f4c6b").quantiles(5)
+        c = pv.Scale.log(1, maxVal).range("#fff", "#3f4c6b")
+        d = [
+          125000
+           75000
+           25000
+           12500
+            7500
+            2500
+            1250
+             750
+        ]
         c.legendTicks = ->
-          l = []
-          q = c.quantiles()
-          
-          for i in [(q.length-2)..0]
-            v = (q[i] + q[i+1]) / 2
-            l.push {
-              value: v
-              min: q[i]
-              max: q[i+1]
-              text: v #"$#{ v.toFixed(2) } (#{ (5-i) * 100 / 5 }%)"
+          ret = []
+          for t in d
+            ret.push {
+              value: t
+              text: t
             }
-          return l
+            
+          return ret
         c.between = false
         return c
   }
@@ -111,7 +115,9 @@ window.heatmap = {
   
   constructor_count: 0
   
-  def: ({graphSelector, buttonSelector, data, params, showVals, onclick, verbose}) ->  
+  def: ({graphSelector, buttonSelector, data, params, showVals, onclick, maxVals, verbose}) ->  
+    dvl.debug "maxVals: ", maxVals
+    
     verbose or= false
     
     dvl.debug "data: ", data
@@ -197,6 +203,7 @@ window.heatmap = {
     updateColorScale = () ->
       mes = val.get()
       ds = data.get()
+      mxVal = maxVals.get()
       
       o.ut(true, "mes: ", mes)
       o.ut(true, "ds: ", ds)
@@ -206,7 +213,7 @@ window.heatmap = {
       m = heatmap.mesures[mes]
       if not m?
         throw "Measure: #{mes} not defined. :-("
-      rawScale = m.getScale(ds)
+      rawScale = m.getScale(ds, mxVal[mes])
       colorScale.set((d) -> if d > 0 then rawScale(d).color else 'none')
       legendTicks.set(rawScale.legendTicks())
     
@@ -214,7 +221,7 @@ window.heatmap = {
     
     dvl.register {
       fn: updateColorScale,
-      listen: [data, val],
+      listen: [data, val, maxVals],
       change: [colorScale, labelText, legendTicks],
       name: 'color_updater'
     }

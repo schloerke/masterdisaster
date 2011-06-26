@@ -170,6 +170,24 @@ $ ->
     showVals: ["killed", "affected"]
     metrics: []
     verbose: true
+    maxVals: dvl.apply {
+      args: [all]
+      fn: (al) ->
+        
+        max = {
+          killed:   0
+          affected: 0
+        }
+        
+        for year, yearVal of al
+          for countryObj in yearVal
+            if countryObj.affected > max.affected
+              max.affected = countryObj.affected
+            if countryObj.killed > max.killed
+              max.killed = countryObj.killed
+            
+        return max
+    }
   }
 
 
