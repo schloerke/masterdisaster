@@ -1,24 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html>
   <head>
-    <title>Master that disaster!</title>
+    <title>A DISASTER STRUCK</title>
     <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
-    <style>
-    .helvetica{font-family:helvetica,arial,freesans,clean,sans-serif;}
-    .inconsolata{font-family:"inconsolata-1","inconsolata-2",monospace;}
-    .uppercased{letter-spacing:2px;text-transform:uppercase;}
-    .bodytext{font-size:12px;font-weight:400;}
-    .inline-blocks{display:inline-block;*margin:0;*display:inline;}
-    .opaque{opacity:1;filter:"alpha(opacity=100)";-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";}
-    .transparent{opacity:0;filter:"alpha(opacity=0)";-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";}
-    svg.heatmap .background{fill:#eee;display:block;}
-    svg.heatmap .lines{shape-rendering:crispEdges;stroke:#999;}
-    svg.heatmap text{cursor:pointer;}
-    .heatmap_button{margin-top:10px;margin-left:10px;}
-    .heatmap_x_title,.heatmap_y_title{font-size:20px;}
-    
-    </style>
     <script type="text/javascript" src="/js/jq/jquery-1.4.4.js"></script>
     <script type="text/javascript" src="/js/jq/jquery-ui-1.8.10.custom.min.js"></script>
     <script type="text/javascript" src="/js/utils/o.js"></script>
@@ -33,18 +18,21 @@
   </head>
   <body>
     <div class="wrapper">
-      <div id="buttons"></div>    
-      <div id="toggleOnOff"></div>
-      <div id="canvas"></div>    
-      <section>
-        <label>Time:</label> 
-        <div id="scale">
-          <span id="scale_label">1950</span> 
-         </div>
-         <button id="play">Play</button>
-         <button id="pause">Pause</button>
-      </section>
-    </div>
-    <div id="time_graph"></div>
+      <header>
+        <h1>A Disaster Struck</h1>
+        <label>now viewing those:</label><div id="buttons"></div>
+        <div id="toggleOnOff"></div>
+        <div id="scale_label">1950</div> 
+      </header>
+      <div id="canvas">
+      </div>    
+      <footer>
+        <section>
+          <label>t:</label> 
+          <div id="scale"></div>
+          <button id="play">Go</button>
+          <button id="pause">Pause</button>
+        </section>
+      </footer>
   </body>
 </html>

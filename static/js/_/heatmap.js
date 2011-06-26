@@ -54,16 +54,18 @@
         numberFormater: pv.identity,
         getScale: function(data, maxVal) {
           var c, d;
-          c = pv.Scale.log(1, maxVal).range("#fff", "#BC0F00");
+          c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404");
           d = [5000000, 1000000, 500000, 100000, 50000, 10000, 5000, 1000];
           c.legendTicks = function() {
-            var ret, t, _i, _len;
+            var ret, t, u, _i, _len;
             ret = [];
             for (_i = 0, _len = d.length; _i < _len; _i++) {
               t = d[_i];
+              u = t.toString();
+              u = u.substring(0, u.length - 3) + "k";
               ret.push({
                 value: t,
-                text: t
+                text: u
               });
             }
             return ret;
@@ -179,11 +181,13 @@
         controls = d3.select(buttonSelector.get());
         controls.selectAll("button").data(showVals.get()).enter("button").text(function(d) {
           return d;
+        }).attr("class", function(d) {
+          return d;
         }).on('click', function(d) {
           return val.set(d).notify();
         });
         controls.append("span").text(" | ");
-        controls.append("button").attr("class", "heatmap_button").text("Toggle clustering").on("click", function() {
+        controls.append("button").attr("class", "heatmap_button").text("cluster").on("click", function() {
           var c;
           c = !clusterX.get();
           clusterX.set(c);
@@ -302,8 +306,8 @@
           text: sx.ticks,
           baseline: "top",
           align: "start",
-          angle: 45,
-          color: dvl.gen.equal(sx.ticks, highlightX, "red", "black")
+          angle: 90,
+          color: dvl.gen.equal(sx.ticks, highlightX, "#333", "#888")
         },
         on: {
           click: function(i) {
@@ -329,7 +333,7 @@
           text: sy.ticks,
           align: "end",
           baseline: "middle",
-          color: dvl.gen.equal(sy.ticks, highlightY, "red", "black")
+          color: dvl.gen.equal(sy.ticks, highlightY, "#333", "#888")
         },
         on: {
           click: function(i) {
@@ -395,7 +399,7 @@
           width: 20,
           height: 20,
           fill: dvl.gen.fromArray(legendTicks, dvl.acc('value'), colorScale),
-          stroke: "#ccc"
+          stroke: "none"
         }
       });
       dvl.svg.labels({
@@ -407,8 +411,8 @@
           top: dvl.gen.fromFn(function(i) {
             return 200 + 12 + i * 24;
           }),
-          width: 20,
-          height: 20,
+          width: 10,
+          height: 10,
           text: dvl.gen.fromArray(legendTicks, dvl.acc('text'))
         }
       });
@@ -432,7 +436,7 @@
           text: xTitle,
           baseline: "top",
           align: "middle",
-          color: "black"
+          color: "#666"
         }
       });
       yTitle = dvl.def("Country");
@@ -451,7 +455,7 @@
           baseline: "middle",
           align: "right",
           angle: -90,
-          color: "black"
+          color: "#666"
         }
       });
       return {

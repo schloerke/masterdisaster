@@ -57,7 +57,7 @@ window.heatmap = {
       numberFormater: pv.identity
       getScale: (data, maxVal) ->
         
-        c = pv.Scale.log(1, maxVal).range("#fff", "#BC0F00")
+        c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404")
         d = [
           5000000
           1000000
@@ -71,9 +71,11 @@ window.heatmap = {
         c.legendTicks = ->
           ret = []
           for t in d
+            u = t.toString()
+            u = u.substring(0,u.length-3) + "k"
             ret.push {
               value: t
-              text: t
+              text: u
             }
             
           return ret
@@ -202,13 +204,14 @@ window.heatmap = {
         .data(showVals.get())
         .enter("button")
           .text((d) -> d)
+          .attr("class", (d) -> d)
           .on('click', (d) -> val.set(d).notify())
         
       controls.append("span").text(" | ");
     
       controls.append("button")
         .attr("class", "heatmap_button")
-        .text("Toggle clustering")
+        .text("cluster")
         .on("click", () ->
           c = not clusterX.get()
           # c is T/F
@@ -326,8 +329,8 @@ window.heatmap = {
         text: sx.ticks
         baseline: "top"
         align: "start"
-        angle: 45
-        color: dvl.gen.equal(sx.ticks, highlightX, "red", "black")
+        angle: 90
+        color: dvl.gen.equal(sx.ticks, highlightX, "#333", "#888")
       on:
         click: (i) ->
           if onclick?.xLabel?
@@ -350,7 +353,7 @@ window.heatmap = {
         text: sy.ticks
         align: "end"
         baseline: "middle"
-        color: dvl.gen.equal(sy.ticks, highlightY, "red", "black")
+        color: dvl.gen.equal(sy.ticks, highlightY, "#333", "#888")
       on:
         click: (i) ->
           if onclick?.yLabel?
@@ -372,7 +375,7 @@ window.heatmap = {
     }
     keys = dvl.apply {
       args: [data, getX, getY]
-      fn: (ds, x, y) ->    
+      fn: (ds, x, y) ->
         i = 0
         keyArr = []
         while i < ds.length
@@ -433,18 +436,18 @@ window.heatmap = {
         width: 20
         height: 20
         fill: dvl.gen.fromArray(legendTicks, dvl.acc('value'), colorScale)
-        stroke: "#ccc"
+        stroke: "none"
     }
     
     dvl.svg.labels {
       panel: panel
       duration: 0
       clip: false
-      props: 
+      props:
         right: -50
         top: dvl.gen.fromFn((i) -> 200+12+i*24 )
-        width: 20
-        height: 20
+        width: 10
+        height: 10
         text: dvl.gen.fromArray(legendTicks, dvl.acc('text'))
     }
     
@@ -470,7 +473,7 @@ window.heatmap = {
         baseline: "top"
         align: "middle"
         # angle: 45
-        color: "black" # dvl.gen.equal(sx.ticks, highlightX, "red", "black")
+        color: "#666"
     }
 
     # Y Title
@@ -490,7 +493,7 @@ window.heatmap = {
         baseline: "middle"
         align: "right"
         angle: -90
-        color: "black" # dvl.gen.equal(sx.ticks, highlightX, "red", "black")
+        color: "#666"
     }
     
     
