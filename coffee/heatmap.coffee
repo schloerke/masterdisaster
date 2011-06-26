@@ -431,8 +431,15 @@ window.heatmap = {
           keyArr.push(k.replace(/[^a-zA-Z]/g, ''))
           i++
           
+        for item, pos in keyArr
+          if keyArr.indexOf(item) isnt pos
+            o.ut(true, "item: ", item)
+            
+            throw ":- ("
+          
         return keyArr
     }
+    # dvl.debug "keys: ", keys
     dvl.svg.bars {
       panel: panel
       duration: duration

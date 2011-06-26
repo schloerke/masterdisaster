@@ -379,13 +379,20 @@
       keys = dvl.apply({
         args: [data, getX, getY],
         fn: function(ds, x, y) {
-          var i, k, keyArr;
+          var i, item, k, keyArr, pos, _len;
           i = 0;
           keyArr = [];
           while (i < ds.length) {
             k = x(ds[i]) + "_" + y(ds[i]);
             keyArr.push(k.replace(/[^a-zA-Z]/g, ''));
             i++;
+          }
+          for (pos = 0, _len = keyArr.length; pos < _len; pos++) {
+            item = keyArr[pos];
+            if (keyArr.indexOf(item) !== pos) {
+              o.ut(true, "item: ", item);
+              throw ":- (";
+            }
           }
           return keyArr;
         }

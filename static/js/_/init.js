@@ -97,7 +97,7 @@
     window.allt = dvl.json2({
       url: "/all",
       fn: function(d) {
-        var good, makeDate, obj, ret, row, rows, seen, start, _i, _j, _len, _len2, _name, _name2;
+        var good, makeDate, obj, ret, row, rows, seen, start, t, _i, _j, _len, _len2, _name, _name2;
         makeDate = function(dt) {
           var y;
           dt = "" + dt;
@@ -110,15 +110,16 @@
         for (_i = 0, _len = rows.length; _i < _len; _i++) {
           row = rows[_i];
           start = makeDate(row.Start);
-          obj.push({
+          t = {
             start: start,
             country: row.Country || "Country",
             cost: row.Cost || 1,
             killed: row.Killed || 1,
             affected: row.Affected || 1,
-            type: (row.Sub_Type || row.Type).toLowerCase(),
-            key: "" + (row.Sub_Type || row.Type) + "_" + (row.Country || "Country")
-          });
+            type: (row.Sub_Type || row.Type).toLowerCase()
+          };
+          t.key = "" + t.type + "_" + t.country;
+          obj.push(t);
         }
         ret = {};
         seen = {};
