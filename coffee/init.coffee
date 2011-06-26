@@ -218,9 +218,11 @@ $ ->
       return a[t]
   }
   
+  
+  kOrA = dvl.def("killed")
   window.allTimeData = dvl.apply {
-    args: [all]
-    fn: (a) ->
+    args: [all, kOrA]
+    fn: (a, v) ->
       
       rets = []
       for year, yearVal of a
@@ -236,7 +238,7 @@ $ ->
       for ret in rets
         t.x.push(ret.type)
         t.y.push(ret.country)
-        t.v.push(ret.killed)
+        t.v.push(ret[v])
         
       return t
   }
@@ -323,5 +325,17 @@ $ ->
   }
   
 
+  dvl.debug "ht.val", ht.val
+  
+  dvl.register {
+    listen: [ht.val]
+    change: [kOrA]
+    fn: ->
+      h = ht.val.get()
+      return null if not h?
+      
+      if kOrA.get() isnt h
+        kOrA.set(h).notify()
+  }
 
 

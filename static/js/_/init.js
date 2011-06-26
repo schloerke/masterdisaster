@@ -6,7 +6,7 @@
     return -1;
   };
   $(function() {
-    var allow_increment, collection, ht, increment_time, maxCountries, maxDisasters, path, status, timeMax, timeMin, translate, xy;
+    var allow_increment, collection, ht, increment_time, kOrA, maxCountries, maxDisasters, path, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -237,9 +237,10 @@
         return a[t];
       }
     });
+    kOrA = dvl.def("killed");
     window.allTimeData = dvl.apply({
-      args: [all],
-      fn: function(a) {
+      args: [all, kOrA],
+      fn: function(a, v) {
         var countryObj, ret, rets, t, year, yearVal, _i, _j, _len, _len2;
         rets = [];
         for (year in a) {
@@ -258,7 +259,7 @@
           ret = rets[_j];
           t.x.push(ret.type);
           t.y.push(ret.country);
-          t.v.push(ret.killed);
+          t.v.push(ret[v]);
         }
         return t;
       }
@@ -301,7 +302,7 @@
         return ret;
       }
     });
-    return ht = heatmap.def({
+    ht = heatmap.def({
       graphSelector: '#canvas',
       buttonSelector: '#buttons',
       data: yearAll,
@@ -340,6 +341,21 @@
       maxDisasters: maxDisasters,
       clusterCountries: clusY,
       clusterDisasters: clusX
+    });
+    dvl.debug("ht.val", ht.val);
+    return dvl.register({
+      listen: [ht.val],
+      change: [kOrA],
+      fn: function() {
+        var h;
+        h = ht.val.get();
+        if (!(h != null)) {
+          return null;
+        }
+        if (kOrA.get() !== h) {
+          return kOrA.set(h).notify();
+        }
+      }
     });
   });
 }).call(this);

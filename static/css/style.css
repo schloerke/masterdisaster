@@ -81,3 +81,7 @@ fill:#666;
 button.killed {
 background:#C47777;
 }
+
+button.affected {
+  background: #848CA0;
+}
