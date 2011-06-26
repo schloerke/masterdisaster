@@ -165,7 +165,7 @@ $ ->
   $("#pause").click(pause)
 
   quantize = (d) ->
-    console.log 'wur' 
+    console.log 'wur'
     ###
      return ("q" + Math.min(8, ~~(d.rgdpch * 9 / 12)) + "-9")
     ###
