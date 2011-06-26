@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, gdp, i, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
+    var allow_increment, chart, collection, gdptemp, i, increment_time, path, quantize, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -11,7 +11,7 @@
     path = d3.geo.path().projection(xy);
     timeMin = 1950;
     timeMax = 2010;
-    time = dvl.def(timeMin, "time");
+    window.time = dvl.def(timeMin, "time");
     allow_increment = dvl.def(false, "allow_increment");
     dvl.html.out({
       selector: "#scale_label",
@@ -50,7 +50,7 @@
     collection = dvl.json2({
       url: "/map"
     });
-    gdp = dvl.json2({
+    gdptemp = dvl.json2({
       url: "/gdp",
       fn: function(d) {
         var newGdp, row, _i, _len, _name, _ref;
@@ -68,19 +68,60 @@
         return newGdp;
       }
     });
-    yearData = dvl.apply({
+    window.gdp = dvl.apply({
+      args: [gdptemp, collection],
+      fn: function(g, col) {
+        var country, countryval, feature, val, year, _i, _len, _ref;
+        for (year in g) {
+          val = g[year];
+          for (country in val) {
+            countryval = val[country];
+            _ref = col.features;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              feature = _ref[_i];
+              if (country === feature.properties.name) {
+                countryval.svgObj = feature;
+                break;
+              }
+            }
+          }
+        }
+        return g;
+      }
+    });
+    window.yearData = dvl.apply({
       args: [gdp, time],
       fn: function(g, t) {
         return g[t];
       }
     });
-    dvl.debug("ourdata", yearData);
+    dvl.register({
+      listen: [yearData],
+      fn: function() {
+        var key, val, yd;
+        yd = yearData.get();
+        if (!(yd != null)) {
+          return null;
+        }
+        o.ut(true, "yd: ", yd);
+        window.svgs = [];
+        for (key in yd) {
+          val = yd[key];
+          if (val.svgObj != null) {
+            svgs.push(val.svgObj);
+          }
+        }
+        chart.selectAll("path.blue").data(svgs).enter().append("svg:path").attr("d", path).attr("class", "blue").attr("").append("svg:title");
+        chart.selectAll("path.blue").data(svgs).append("svg:path").attr("d", path).attr("class", "blue").append("svg:title");
+        chart.selectAll("path.blue").data(svgs).exit().append("svg:path").attr("d", path).attr("class", "blue").append("svg:title");
+        return null;
+      }
+    });
     dvl.register({
       listen: [collection],
       fn: function() {
-        var col;
-        col = collection.get();
-        if (!(col != null)) {
+        window.col = collection.get();
+        if (!(typeof col !== "undefined" && col !== null)) {
           return null;
         }
         chart.selectAll("path").data(col.features).enter().append("svg:path").attr("d", path).append("svg:title").text(function(d) {
@@ -110,6 +151,12 @@
       }
     });
     $("#play").click(play);
-    return $("#pause").click(pause);
+    $("#pause").click(pause);
+    return quantize = function(d) {
+      return console.log('wur');
+      /*
+           return ("q" + Math.min(8, ~~(d.rgdpch * 9 / 12)) + "-9")
+          */
+    };
   });
 }).call(this);
