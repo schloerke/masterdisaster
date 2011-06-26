@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, gdptemp, i, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
+    var allow_increment, chart, collection, gdptemp, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -117,7 +117,6 @@
         }
       }
     });
-    i = 0;
     $("#scale").slider({
       min: timeMin,
       max: timeMax,
@@ -128,6 +127,14 @@
       }
     });
     $("#play").click(play);
-    return $("#pause").click(pause);
+    $("#pause").click(pause);
+    o.log("asdfasdf");
+    window.data = dvl.json2({
+      url: "/all",
+      map: function(d) {
+        return o.log("asdfasdf");
+      }
+    });
+    return o.log("asdfasdf");
   });
 }).call(this);
