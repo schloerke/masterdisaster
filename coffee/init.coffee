@@ -218,13 +218,75 @@ $ ->
       return a[t]
   }
   
+  window.allTimeData = dvl.apply {
+    args: [all]
+    fn: (a) ->
+      
+      rets = []
+      for year, yearVal of a
+        for countryObj in yearVal
+          rets.push(countryObj)
+            
+      t = {
+        x: []
+        y: []
+        v: []
+      }
+      
+      for ret in rets
+        t.x.push(ret.type)
+        t.y.push(ret.country)
+        t.v.push(ret.killed)
+        
+      return t
+  }
+  
+  window.clusX = dvl.apply {
+    args: [allTimeData, maxDisasters]
+    fn: (ats, mds) ->
+      
+      cs = heatmap.clusterSort {
+        xVals:      ats.x
+        yVals:      ats.y
+        valueVals:  ats.v
+      }
+      
+      ret = []
+      for c in cs
+        if c in mds
+          ret.push(c)
+      
+      return ret
+  }
+  
+  window.clusY = dvl.apply {
+    args: [allTimeData, maxCountries]
+    fn: (ats, mcs) ->
+      
+      cs = heatmap.clusterSort {
+        xVals:      ats.y
+        yVals:      ats.x
+        valueVals:  ats.v
+      }
+      
+      ret = []
+      for c in cs
+        if c in mcs
+          ret.push(c)
+      
+      return ret
+  }
+  
+  
+  
+  
   
   # def: ({graphSelector, buttonSelector, where, data, params, showVals, metrics, onclick, verbose}) ->  
   
   
   
   
-  heatmap.def {
+  ht = heatmap.def {
     graphSelector: '#canvas'
     buttonSelector: '#buttons'
     data: yearAll
@@ -256,6 +318,19 @@ $ ->
     }
     maxCountries: maxCountries
     maxDisasters: maxDisasters
+    clusterCountries: clusY
+    clusterDisasters: clusX
+  }
+  
+  dvl.html.out {
+    selector: '#toggleOnOff'
+    data: ht.clusterX
+    format: (d) ->
+      return if d
+        "ON"
+      else
+        "OFF"
+        
   }
 
 

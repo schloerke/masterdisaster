@@ -115,7 +115,10 @@ window.heatmap = {
   
   constructor_count: 0
   
-  def: ({graphSelector, buttonSelector, data, params, showVals, onclick, maxVals, maxDisasters, maxCountries, verbose}) ->  
+  def: ({graphSelector, buttonSelector, data, params, showVals, onclick, maxVals, maxDisasters, maxCountries, clusterDisasters, clusterCountries, verbose}) ->  
+    
+    
+    
     
     verbose or= false
     
@@ -155,6 +158,26 @@ window.heatmap = {
     
     clusterX = dvl.def(false, 'clusterX')
     clusterY = dvl.def(false, 'clusterY')
+    
+    disasterValues = dvl.apply {
+      args: [clusterX, maxDisasters, clusterDisasters]
+      fn: (cx, md, cd)->
+        if cx is true
+          return cd
+        else
+          return md
+    }
+    countryValues = dvl.apply {
+      args: [clusterY, maxCountries, clusterCountries]
+      fn: (cy, mc, cc)->
+        if cy is true
+          return cc
+        else
+          return mc
+    }
+    
+    
+    
     getX = dvl.acc(x)
     getY = dvl.acc(y)
     getV = dvl.acc(val)
@@ -236,7 +259,7 @@ window.heatmap = {
     
     sx = dvl.scale.ordinal {
       name: "scale_x"
-      domain: { data: maxDisasters, uniq: true }
+      domain: { data: disasterValues, uniq: true }
       rangeFrom: 0
       rangeTo: panel.width
       padding: 10
@@ -244,7 +267,7 @@ window.heatmap = {
     
     sy = dvl.scale.ordinal {
       name: "scale_y"
-      domain: { data: maxCountries, uniq: true }
+      domain: { data: countryValues, uniq: true }
       rangeFrom: 0
       rangeTo: panel.height
       padding: 10

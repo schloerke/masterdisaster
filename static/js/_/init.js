@@ -1,6 +1,12 @@
 (function() {
+  var __indexOf = Array.prototype.indexOf || function(item) {
+    for (var i = 0, l = this.length; i < l; i++) {
+      if (this[i] === item) return i;
+    }
+    return -1;
+  };
   $(function() {
-    var allow_increment, collection, increment_time, maxCountries, maxDisasters, path, status, timeMax, timeMin, translate, xy;
+    var allow_increment, collection, ht, increment_time, maxCountries, maxDisasters, path, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -231,7 +237,71 @@
         return a[t];
       }
     });
-    return heatmap.def({
+    window.allTimeData = dvl.apply({
+      args: [all],
+      fn: function(a) {
+        var countryObj, ret, rets, t, year, yearVal, _i, _j, _len, _len2;
+        rets = [];
+        for (year in a) {
+          yearVal = a[year];
+          for (_i = 0, _len = yearVal.length; _i < _len; _i++) {
+            countryObj = yearVal[_i];
+            rets.push(countryObj);
+          }
+        }
+        t = {
+          x: [],
+          y: [],
+          v: []
+        };
+        for (_j = 0, _len2 = rets.length; _j < _len2; _j++) {
+          ret = rets[_j];
+          t.x.push(ret.type);
+          t.y.push(ret.country);
+          t.v.push(ret.killed);
+        }
+        return t;
+      }
+    });
+    window.clusX = dvl.apply({
+      args: [allTimeData, maxDisasters],
+      fn: function(ats, mds) {
+        var c, cs, ret, _i, _len;
+        cs = heatmap.clusterSort({
+          xVals: ats.x,
+          yVals: ats.y,
+          valueVals: ats.v
+        });
+        ret = [];
+        for (_i = 0, _len = cs.length; _i < _len; _i++) {
+          c = cs[_i];
+          if (__indexOf.call(mds, c) >= 0) {
+            ret.push(c);
+          }
+        }
+        return ret;
+      }
+    });
+    window.clusY = dvl.apply({
+      args: [allTimeData, maxCountries],
+      fn: function(ats, mcs) {
+        var c, cs, ret, _i, _len;
+        cs = heatmap.clusterSort({
+          xVals: ats.y,
+          yVals: ats.x,
+          valueVals: ats.v
+        });
+        ret = [];
+        for (_i = 0, _len = cs.length; _i < _len; _i++) {
+          c = cs[_i];
+          if (__indexOf.call(mcs, c) >= 0) {
+            ret.push(c);
+          }
+        }
+        return ret;
+      }
+    });
+    ht = heatmap.def({
       graphSelector: '#canvas',
       buttonSelector: '#buttons',
       data: yearAll,
@@ -267,7 +337,20 @@
         }
       }),
       maxCountries: maxCountries,
-      maxDisasters: maxDisasters
+      maxDisasters: maxDisasters,
+      clusterCountries: clusY,
+      clusterDisasters: clusX
+    });
+    return dvl.html.out({
+      selector: '#toggleOnOff',
+      data: ht.clusterX,
+      format: function(d) {
+        if (d) {
+          return "ON";
+        } else {
+          return "OFF";
+        }
+      }
     });
   });
 }).call(this);

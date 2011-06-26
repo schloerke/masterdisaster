@@ -100,8 +100,8 @@
     },
     constructor_count: 0,
     def: function(_arg) {
-      var buttonSelector, clusterX, clusterY, colorScale, controls, data, duration, getV, getX, getY, graphSelector, highlightValue, highlightX, highlightY, keys, labelText, legendTicks, margin, maxCountries, maxDisasters, maxVals, onclick, panel, params, scaledTicksY, showVals, size, sizeX, sizeY, sx, sy, updateColorScale, val, verbose, x, xTitle, y, yTitle;
-      graphSelector = _arg.graphSelector, buttonSelector = _arg.buttonSelector, data = _arg.data, params = _arg.params, showVals = _arg.showVals, onclick = _arg.onclick, maxVals = _arg.maxVals, maxDisasters = _arg.maxDisasters, maxCountries = _arg.maxCountries, verbose = _arg.verbose;
+      var buttonSelector, clusterCountries, clusterDisasters, clusterX, clusterY, colorScale, controls, countryValues, data, disasterValues, duration, getV, getX, getY, graphSelector, highlightValue, highlightX, highlightY, keys, labelText, legendTicks, margin, maxCountries, maxDisasters, maxVals, onclick, panel, params, scaledTicksY, showVals, size, sizeX, sizeY, sx, sy, updateColorScale, val, verbose, x, xTitle, y, yTitle;
+      graphSelector = _arg.graphSelector, buttonSelector = _arg.buttonSelector, data = _arg.data, params = _arg.params, showVals = _arg.showVals, onclick = _arg.onclick, maxVals = _arg.maxVals, maxDisasters = _arg.maxDisasters, maxCountries = _arg.maxCountries, clusterDisasters = _arg.clusterDisasters, clusterCountries = _arg.clusterCountries, verbose = _arg.verbose;
       verbose || (verbose = false);
       if (!(buttonSelector != null)) {
         if (verbose) {
@@ -135,6 +135,26 @@
       });
       clusterX = dvl.def(false, 'clusterX');
       clusterY = dvl.def(false, 'clusterY');
+      disasterValues = dvl.apply({
+        args: [clusterX, maxDisasters, clusterDisasters],
+        fn: function(cx, md, cd) {
+          if (cx === true) {
+            return cd;
+          } else {
+            return md;
+          }
+        }
+      });
+      countryValues = dvl.apply({
+        args: [clusterY, maxCountries, clusterCountries],
+        fn: function(cy, mc, cc) {
+          if (cy === true) {
+            return cc;
+          } else {
+            return mc;
+          }
+        }
+      });
       getX = dvl.acc(x);
       getY = dvl.acc(y);
       getV = dvl.acc(val);
@@ -218,7 +238,7 @@
       sx = dvl.scale.ordinal({
         name: "scale_x",
         domain: {
-          data: maxDisasters,
+          data: disasterValues,
           uniq: true
         },
         rangeFrom: 0,
@@ -228,7 +248,7 @@
       sy = dvl.scale.ordinal({
         name: "scale_y",
         domain: {
-          data: maxCountries,
+          data: countryValues,
           uniq: true
         },
         rangeFrom: 0,
