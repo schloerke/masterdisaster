@@ -47,6 +47,33 @@
       return order;
     },
     mesures: {
+      cost: {
+        label: 'Cost',
+        prefix: '',
+        postfix: '',
+        numberFormater: pv.identity,
+        getScale: function(data, maxVal) {
+          var c, d;
+          c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404");
+          d = [300000000, 150000000, 75000000, 10000000, 2500000, 50000, 5000, 1000];
+          c.legendTicks = function() {
+            var ret, t, u, _i, _len;
+            ret = [];
+            for (_i = 0, _len = d.length; _i < _len; _i++) {
+              t = d[_i];
+              u = t.toString();
+              u = u.substring(0, u.length - 3) + "k";
+              ret.push({
+                value: t,
+                text: u
+              });
+            }
+            return ret;
+          };
+          c.between = false;
+          return c;
+        }
+      },
       killed: {
         label: 'Killed',
         prefix: '',
@@ -186,8 +213,11 @@
         }).on('click', function(d) {
           return val.set(d).notify();
         });
+        $("button.killed").attr("title", "Number of Deaths");
+        $("button.affected").attr("title", "Number of Property or Physical Loss");
+        $("button.cost").attr("title", "Estimated Cost of Event ");
         controls.append("span").text(" | ");
-        controls.append("button").attr("class", "heatmap_button").text("cluster").on("click", function() {
+        controls.append("button").attr("class", "heatmap_button").attr("title", "Group points according to each country's disasters over the whole time range.").text("cluster").on("click", function() {
           var c;
           c = !clusterX.get();
           clusterX.set(c);
@@ -319,19 +349,6 @@
           align: "start",
           angle: 90,
           color: dvl.gen.equal(sx.ticks, highlightX, "#333", "#888")
-        },
-        on: {
-          click: function(i) {
-            var text;
-            if ((onclick != null ? onclick.xLabel : void 0) != null) {
-              text = sx.ticks.gen()(i);
-              onclick.xLabel({
-                label: text,
-                pos: i
-              });
-            }
-            return null;
-          }
         }
       });
       dvl.svg.labels({
@@ -345,19 +362,6 @@
           align: "end",
           baseline: "middle",
           color: dvl.gen.equal(sy.ticks, highlightY, "#333", "#888")
-        },
-        on: {
-          click: function(i) {
-            var text;
-            if ((onclick != null ? onclick.yLabel : void 0) != null) {
-              text = sy.ticks.gen()(i);
-              onclick.yLabel({
-                label: text,
-                pos: i
-              });
-            }
-            return null;
-          }
         }
       });
       sizeX = dvl.apply({

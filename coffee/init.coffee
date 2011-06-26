@@ -121,9 +121,10 @@ $ ->
         obj.push {
           start:    start
           country:  row.Country   or "Country"
+          cost:     row.Cost      or 1
           killed:   row.Killed    or 1
           affected: row.Affected  or 1
-          type:     row.Sub_Type  or row.Type
+          type:     (row.Sub_Type  or row.Type).toLowerCase()
           key:      "#{row.Sub_Type  or row.Type}_#{row.Country   or "Country"}"
         }
         
@@ -285,7 +286,28 @@ $ ->
   
   # def: ({graphSelector, buttonSelector, where, data, params, showVals, metrics, onclick, verbose}) ->  
   
-  
+  maxVals = dvl.apply {
+    args: [all]
+    fn: (al) ->
+      
+      max = {
+        killed:   0
+        affected: 0
+        cost:     0
+      }
+      
+      for year, yearVal of al
+        for countryObj in yearVal
+          if countryObj.affected > max.affected
+            max.affected = countryObj.affected
+          if countryObj.killed > max.killed
+            max.killed = countryObj.killed
+          if countryObj.cost > max.cost
+            max.cost = countryObj.cost
+          
+      return max
+  }
+  dvl.debug "maxVals: ", maxVals
   
   
   ht = heatmap.def {
@@ -297,35 +319,15 @@ $ ->
       y: "country"
       value: "killed"
     }
-    showVals: ["killed", "affected"]
+    showVals: ["killed", "affected", "cost"]
     metrics: []
     verbose: true
-    maxVals: dvl.apply {
-      args: [all]
-      fn: (al) ->
-        
-        max = {
-          killed:   0
-          affected: 0
-        }
-        
-        for year, yearVal of al
-          for countryObj in yearVal
-            if countryObj.affected > max.affected
-              max.affected = countryObj.affected
-            if countryObj.killed > max.killed
-              max.killed = countryObj.killed
-            
-        return max
-    }
+    maxVals: maxVals
     maxCountries: maxCountries
     maxDisasters: maxDisasters
     clusterCountries: clusY
     clusterDisasters: clusX
   }
-  
-
-  dvl.debug "ht.val", ht.val
   
   dvl.register {
     listen: [ht.val]

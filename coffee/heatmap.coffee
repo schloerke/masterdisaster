@@ -50,6 +50,38 @@ window.heatmap = {
   
   # This essentialy configured the mmx.heatmap
   mesures: {
+    cost: 
+      label: 'Cost'
+      prefix: ''
+      postfix: ''
+      numberFormater: pv.identity
+      getScale: (data, maxVal) ->
+        
+        c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404")
+        d = [
+          300000000
+          150000000
+           75000000
+           10000000
+            2500000
+              50000
+               5000
+               1000
+        ]
+        c.legendTicks = ->
+          ret = []
+          for t in d
+            u = t.toString()
+            u = u.substring(0,u.length-3) + "k"
+            ret.push {
+              value: t
+              text: u
+            }
+            
+          return ret
+        c.between = false
+        return c
+        
     killed: 
       label: 'Killed'
       prefix: ''
@@ -206,11 +238,17 @@ window.heatmap = {
           .text((d) -> d)
           .attr("class", (d) -> d)
           .on('click', (d) -> val.set(d).notify())
+      
+      $("button.killed").attr("title", "Number of Deaths")
+      $("button.affected").attr("title", "Number of Property or Physical Loss")
+      $("button.cost").attr("title", "Estimated Cost of Event ")
         
       controls.append("span").text(" | ");
+      
     
       controls.append("button")
         .attr("class", "heatmap_button")
+        .attr("title", "Group points according to each country's disasters over the whole time range.")
         .text("cluster")
         .on("click", () ->
           c = not clusterX.get()
@@ -341,15 +379,15 @@ window.heatmap = {
         align: "start"
         angle: 90
         color: dvl.gen.equal(sx.ticks, highlightX, "#333", "#888")
-      on:
-        click: (i) ->
-          if onclick?.xLabel?
-            text = sx.ticks.gen()(i)
-            onclick.xLabel {
-              label: text
-              pos: i
-            }
-          null
+      # on:
+      #   click: (i) ->
+      #     if onclick?.xLabel?
+      #       text = sx.ticks.gen()(i)
+      #       onclick.xLabel {
+      #         label: text
+      #         pos: i
+      #       }
+      #     null
     }
     
     # Y Label
@@ -364,15 +402,15 @@ window.heatmap = {
         align: "end"
         baseline: "middle"
         color: dvl.gen.equal(sy.ticks, highlightY, "#333", "#888")
-      on:
-        click: (i) ->
-          if onclick?.yLabel?
-            text = sy.ticks.gen()(i)
-            onclick.yLabel {
-              label: text
-              pos: i
-            }
-          null
+      # on:
+      #   click: (i) ->
+      #     if onclick?.yLabel?
+      #       text = sy.ticks.gen()(i)
+      #       onclick.yLabel {
+      #         label: text
+      #         pos: i
+      #       }
+      #     null
     }
 
     sizeX = dvl.apply {

@@ -6,7 +6,7 @@
     return -1;
   };
   $(function() {
-    var allow_increment, collection, ht, increment_time, kOrA, maxCountries, maxDisasters, path, status, timeMax, timeMin, translate, xy;
+    var allow_increment, collection, ht, increment_time, kOrA, maxCountries, maxDisasters, maxVals, path, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -113,9 +113,10 @@
           obj.push({
             start: start,
             country: row.Country || "Country",
+            cost: row.Cost || 1,
             killed: row.Killed || 1,
             affected: row.Affected || 1,
-            type: row.Sub_Type || row.Type,
+            type: (row.Sub_Type || row.Type).toLowerCase(),
             key: "" + (row.Sub_Type || row.Type) + "_" + (row.Country || "Country")
           });
         }
@@ -302,6 +303,34 @@
         return ret;
       }
     });
+    maxVals = dvl.apply({
+      args: [all],
+      fn: function(al) {
+        var countryObj, max, year, yearVal, _i, _len;
+        max = {
+          killed: 0,
+          affected: 0,
+          cost: 0
+        };
+        for (year in al) {
+          yearVal = al[year];
+          for (_i = 0, _len = yearVal.length; _i < _len; _i++) {
+            countryObj = yearVal[_i];
+            if (countryObj.affected > max.affected) {
+              max.affected = countryObj.affected;
+            }
+            if (countryObj.killed > max.killed) {
+              max.killed = countryObj.killed;
+            }
+            if (countryObj.cost > max.cost) {
+              max.cost = countryObj.cost;
+            }
+          }
+        }
+        return max;
+      }
+    });
+    dvl.debug("maxVals: ", maxVals);
     ht = heatmap.def({
       graphSelector: '#canvas',
       buttonSelector: '#buttons',
@@ -311,38 +340,15 @@
         y: "country",
         value: "killed"
       }),
-      showVals: ["killed", "affected"],
+      showVals: ["killed", "affected", "cost"],
       metrics: [],
       verbose: true,
-      maxVals: dvl.apply({
-        args: [all],
-        fn: function(al) {
-          var countryObj, max, year, yearVal, _i, _len;
-          max = {
-            killed: 0,
-            affected: 0
-          };
-          for (year in al) {
-            yearVal = al[year];
-            for (_i = 0, _len = yearVal.length; _i < _len; _i++) {
-              countryObj = yearVal[_i];
-              if (countryObj.affected > max.affected) {
-                max.affected = countryObj.affected;
-              }
-              if (countryObj.killed > max.killed) {
-                max.killed = countryObj.killed;
-              }
-            }
-          }
-          return max;
-        }
-      }),
+      maxVals: maxVals,
       maxCountries: maxCountries,
       maxDisasters: maxDisasters,
       clusterCountries: clusY,
       clusterDisasters: clusX
     });
-    dvl.debug("ht.val", ht.val);
     return dvl.register({
       listen: [ht.val],
       change: [kOrA],
