@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, increment_time, path, status, time, timeMax, timeMin, translate, xy;
+    var allow_increment, chart, collection, gdp, increment_time, path, status, time, timeMax, timeMin, translate, xy, yearData;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -50,19 +50,31 @@
     collection = dvl.json2({
       url: "/map"
     });
-    window.gdp = dvl.json2({
+    gdp = dvl.json2({
       url: "/gdp",
       fn: function(d) {
-        var row, _i, _len, _ref, _results;
+        var newGdp, row, _i, _len, _name, _ref;
+        newGdp = {};
         _ref = d.rows;
-        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           row = _ref[_i];
-          _results.push(null);
+          newGdp[_name = row.year] || (newGdp[_name] = {});
+          newGdp[row.year][row.country] = {
+            country_isocode: row["country isocode"],
+            pop: row.POP,
+            rgdpch: row.rgdpch
+          };
         }
-        return _results;
+        return newGdp;
       }
     });
+    yearData = dvl.apply({
+      args: [gdp, time],
+      fn: function(g, t) {
+        return g[t];
+      }
+    });
+    dvl.debug("ourdata", yearData);
     dvl.register({
       listen: [collection],
       fn: function() {
