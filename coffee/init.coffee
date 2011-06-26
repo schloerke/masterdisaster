@@ -121,10 +121,10 @@ $ ->
         start = makeDate(row.Start)
         obj.push {
           start:    start
-          country:  row.Country
-          killed:   row.Killed
-          affected: row.Affected or 0
-          type:     row.Sub_Type or row.Type
+          country:  row.Country   or "Country"
+          killed:   row.Killed    or 0
+          affected: row.Affected  or 0
+          type:     row.Sub_Type  or row.Type
         }
         
       
@@ -165,6 +165,7 @@ $ ->
     params: dvl.def {
       x: "type"
       y: "country"
+      value: "killed"
     }
     showVals: ["killed", "affected"]
     metrics: []

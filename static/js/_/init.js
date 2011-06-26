@@ -106,8 +106,8 @@
           start = makeDate(row.Start);
           obj.push({
             start: start,
-            country: row.Country,
-            killed: row.Killed,
+            country: row.Country || "Country",
+            killed: row.Killed || 0,
             affected: row.Affected || 0,
             type: row.Sub_Type || row.Type
           });
@@ -148,7 +148,8 @@
       data: yearAll,
       params: dvl.def({
         x: "type",
-        y: "country"
+        y: "country",
+        value: "killed"
       }),
       showVals: ["killed", "affected"],
       metrics: [],

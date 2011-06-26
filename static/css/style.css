@@ -16,7 +16,7 @@ width:980px;
 margin:0 auto;
 }
 #canvas {
-  height:500px;
+/*  height:500px;*/
   width:100%;
   margin-bottom:10px;
 }
@@ -29,8 +29,6 @@ margin:0 auto;
   color: white;
 }
 svg {
-  width:100%;
-  height:500px;
 }
 path.blue {
 fill:#4401bb;

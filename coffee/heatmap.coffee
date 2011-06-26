@@ -114,6 +114,8 @@ window.heatmap = {
   def: ({graphSelector, buttonSelector, data, params, showVals, onclick, verbose}) ->  
     verbose or= false
     
+    dvl.debug "data: ", data
+    
     # mmx.check.no_def(graphSelector, "graphSelector", "Heatmap")
     if not buttonSelector?
       o.log("buttonSelector is not defined... not placing buttons") if verbose
@@ -132,22 +134,15 @@ window.heatmap = {
     
     
     x = dvl.apply {
-      args: [params, data]
-      fn: (p, d) ->
-        if d[p.x]? and d[p.x].length and d[p.x][0]
-          return p.x
-        else
-          return undefined
+      args: [params]
+      fn: (p) ->
+        return p.x
     }
     
     y = dvl.apply {
-      args: [params, data]
-      fn: (p, d) ->
-        if d[p.y]? and d[p.y].length and d[p.y][0]
-          return p.y
-        else
-          return undefined
-      
+      args: [params]
+      fn: (p) ->
+        return p.y
     }
     
     val = dvl.apply {
@@ -160,7 +155,7 @@ window.heatmap = {
     getX = dvl.acc(x)
     getY = dvl.acc(y)
     getV = dvl.acc(val)
-    duration = 300
+    duration = 0 #100
     
     colorScale  = dvl.def(null, 'color_scale')
     labelText   = dvl.def(null, 'label_text')
@@ -172,39 +167,6 @@ window.heatmap = {
     highlightX      = dvl.def(null, 'hightlightX')
     highlightY      = dvl.def(null, 'hightlightY')
     highlightValue  = dvl.def(null, 'highlightValue')
-    
-    dataX = dvl.apply {
-      args: [data, getX, getY, getV, clusterX]
-      fn: (d, accX, accY, accV, cluster) ->
-        if cluster
-          return mmx.heatmap.clusterSort {
-            xVals:      accX(d)
-            yVals:      accY(d)
-            valueVals:  accV(d)
-          }
-        else
-          
-          mapped = dvl.util.uniq(accX(d))
-          mapped.sort()
-          return mapped
-    }
-    
-    dataY = dvl.apply {
-      args: [data, getX, getY, getV, clusterY]
-      fn: (d, accX, accY, accV, cluster) ->
-        if cluster
-          return mmx.heatmap.clusterSort {
-            xVals:      accY(d)
-            yVals:      accX(d)
-            valueVals:  accV(d)
-          }
-        else
-          mapped = dvl.util.uniq(accY(d))
-          mapped.sort()
-          return mapped
-    }
-    
-    
     
     # setup buttons
     if buttonSelector?
@@ -236,8 +198,12 @@ window.heatmap = {
       mes = val.get()
       ds = data.get()
       
+      o.ut(true, "mes: ", mes)
+      o.ut(true, "ds: ", ds)
+      
+      
       return null if (not ds?) or (not mes?)
-      m = mmx.heatmap.mesures[mes]
+      m = heatmap.mesures[mes]
       if not m?
         throw "Measure: #{mes} not defined. :-("
       rawScale = m.getScale(ds)
@@ -270,7 +236,7 @@ window.heatmap = {
     
     sx = dvl.scale.ordinal {
       name: "scale_x"
-      domain: { data: dataX }
+      domain: { data: data, acc: getX, uniq: true }
       rangeFrom: 0
       rangeTo: panel.width
       padding: 10
@@ -278,16 +244,17 @@ window.heatmap = {
     
     sy = dvl.scale.ordinal {
       name: "scale_y"
-      domain: { data: dataY }
+      domain: { data: data, acc: getY, uniq: true }
       rangeFrom: 0
       rangeTo: panel.height
       padding: 10
     }
     
-    scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale)
+    window.scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale)
     scaledTicksY = dvl.gen.fromArray(sy.ticks, null, sy.scale)
     
     dvl.debug "sx.ticks", sx.ticks
+    dvl.debug "sx.scale", sx.scale
     dvl.debug "scaledTicksX", scaledTicksX
     
     dvl.svg.lines {
@@ -386,53 +353,57 @@ window.heatmap = {
     }
     keys = dvl.apply {
       args: [data, getX, getY]
-      fn: (ds, x, y) ->
-        xArr = x(ds)
-        yArr = y(ds)
-        
+      fn: (ds, x, y) ->    
         i = 0
         keyArr = []
-        while i < xArr.length
-          keyArr.push(xArr[i] + "_" + yArr[i])
+        while i < ds.length
+          k = x(ds[i]) + "_" + y(ds[i])
+          keyArr.push(k.replace(/[^a-zA-Z]/g, ''))
           i++
           
         return keyArr
     }
+    dvl.debug 'keys', keys
     
+    dvl.debug "colorScale: ", colorScale
     dvl.svg.bars {
       panel: panel
       duration: duration
       props:
-        key: keys
-        centerX: dvl.gen.fromColumnData(data, getX, sx.scale)
-        centerY: dvl.gen.fromColumnData(data, getY, sy.scale)
-        width: sizeX
-        height: sizeY
-        fill: dvl.gen.fromColumnData(data, getV, colorScale)
-      on:
-        mousemove: (i) ->
-          d = data.get()
-          highlightX.set(getX.get()(d)[i])
-          highlightY.set(getY.get()(d)[i])
-          highlightValue.set(getV.get()(d)[i])
-          dvl.notify(highlightX, highlightY, highlightValue)
-          null
-          
-        click: (i) ->
-          if onclick?.cell?
-            d = data.get()[i]
-            xVal = getX.get()(d)
-            yVal = getY.get()(d)
-            
-            text = sx.ticks.gen()(i)
-            onclick.cell {
-              data:
-                x: xVal
-                y: yVal
-              dataItem: d
-              pos: i
-            }
-          null
+        # key:      keys
+        centerX:  dvl.gen.fromArray(data, getX, sx.scale)
+        centerY:  dvl.gen.fromArray(data, getY, sy.scale)
+        width:    sizeX
+        height:   sizeY
+        fill:     dvl.gen.fromArray(data, getV, colorScale)
+      # on:
+      #   mousemove: (i) ->
+      #     d = data.get()
+      #     x = getX.get()
+      #     y = getY.get()
+      #     v = getV.get()
+      #     
+      #     highlightX.set(x(d[i]))
+      #     highlightY.set(y(d[i]))
+      #     highlightValue.set(v(d[i]))
+      #     dvl.notify(highlightX, highlightY, highlightValue)
+      #     null
+      #     
+      #   click: (i) ->
+      #     if onclick?.cell?
+      #       d = data.get()[i]
+      #       xVal = getX.get()(d)
+      #       yVal = getY.get()(d)
+      #       
+      #       text = sx.ticks.gen()(i)
+      #       onclick.cell {
+      #         data:
+      #           x: xVal
+      #           y: yVal
+      #         dataItem: d
+      #         pos: i
+      #       }
+      #     null
       
     }
     
@@ -465,15 +436,9 @@ window.heatmap = {
     
     # X Title
     xTitle = dvl.apply {
-      args: [x]
+      args: [val]
       fn: (xVal) ->
-        return switch xVal
-          when "affected"
-            "Affected"
-          when "killed"
-            "Killed"
-          else
-            "you suck"
+        return "Disaster"
     }
     dvl.svg.labels {
       panel: panel
@@ -530,8 +495,6 @@ window.heatmap = {
       getY
       val
       getV
-      dataX
-      dataY
       xTitle
       yTitle
       identifier: "heatmap_#{heatmap.constructor_count++}"

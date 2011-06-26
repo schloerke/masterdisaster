@@ -116,9 +116,10 @@
     },
     constructor_count: 0,
     def: function(_arg) {
-      var buttonSelector, clusterX, clusterY, colorScale, controls, data, dataX, dataY, duration, getV, getX, getY, graphSelector, highlightValue, highlightX, highlightY, keys, labelText, legendTicks, margin, onclick, panel, params, scaledTicksX, scaledTicksY, showVals, size, sizeX, sizeY, sx, sy, updateColorScale, val, verbose, x, xTitle, y, yTitle;
+      var buttonSelector, clusterX, clusterY, colorScale, controls, data, duration, getV, getX, getY, graphSelector, highlightValue, highlightX, highlightY, keys, labelText, legendTicks, margin, onclick, panel, params, scaledTicksY, showVals, size, sizeX, sizeY, sx, sy, updateColorScale, val, verbose, x, xTitle, y, yTitle;
       graphSelector = _arg.graphSelector, buttonSelector = _arg.buttonSelector, data = _arg.data, params = _arg.params, showVals = _arg.showVals, onclick = _arg.onclick, verbose = _arg.verbose;
       verbose || (verbose = false);
+      dvl.debug("data: ", data);
       if (!(buttonSelector != null)) {
         if (verbose) {
           o.log("buttonSelector is not defined... not placing buttons");
@@ -132,23 +133,15 @@
       graphSelector = dvl.wrapConstIfNeeded(graphSelector);
       showVals = dvl.wrapConstIfNeeded(showVals);
       x = dvl.apply({
-        args: [params, data],
-        fn: function(p, d) {
-          if ((d[p.x] != null) && d[p.x].length && d[p.x][0]) {
-            return p.x;
-          } else {
-            ;
-          }
+        args: [params],
+        fn: function(p) {
+          return p.x;
         }
       });
       y = dvl.apply({
-        args: [params, data],
-        fn: function(p, d) {
-          if ((d[p.y] != null) && d[p.y].length && d[p.y][0]) {
-            return p.y;
-          } else {
-            ;
-          }
+        args: [params],
+        fn: function(p) {
+          return p.y;
         }
       });
       val = dvl.apply({
@@ -162,7 +155,7 @@
       getX = dvl.acc(x);
       getY = dvl.acc(y);
       getV = dvl.acc(val);
-      duration = 300;
+      duration = 0;
       colorScale = dvl.def(null, 'color_scale');
       labelText = dvl.def(null, 'label_text');
       legendTicks = dvl.def(null, 'legend_ticks');
@@ -179,40 +172,6 @@
       highlightX = dvl.def(null, 'hightlightX');
       highlightY = dvl.def(null, 'hightlightY');
       highlightValue = dvl.def(null, 'highlightValue');
-      dataX = dvl.apply({
-        args: [data, getX, getY, getV, clusterX],
-        fn: function(d, accX, accY, accV, cluster) {
-          var mapped;
-          if (cluster) {
-            return mmx.heatmap.clusterSort({
-              xVals: accX(d),
-              yVals: accY(d),
-              valueVals: accV(d)
-            });
-          } else {
-            mapped = dvl.util.uniq(accX(d));
-            mapped.sort();
-            return mapped;
-          }
-        }
-      });
-      dataY = dvl.apply({
-        args: [data, getX, getY, getV, clusterY],
-        fn: function(d, accX, accY, accV, cluster) {
-          var mapped;
-          if (cluster) {
-            return mmx.heatmap.clusterSort({
-              xVals: accY(d),
-              yVals: accX(d),
-              valueVals: accV(d)
-            });
-          } else {
-            mapped = dvl.util.uniq(accY(d));
-            mapped.sort();
-            return mapped;
-          }
-        }
-      });
       if (buttonSelector != null) {
         controls = d3.select(buttonSelector.get());
         controls.selectAll("button").data(showVals.get()).enter("button").text(function(d) {
@@ -234,10 +193,12 @@
         var ds, m, mes, rawScale;
         mes = val.get();
         ds = data.get();
+        o.ut(true, "mes: ", mes);
+        o.ut(true, "ds: ", ds);
         if ((!(ds != null)) || (!(mes != null))) {
           return null;
         }
-        m = mmx.heatmap.mesures[mes];
+        m = heatmap.mesures[mes];
         if (!(m != null)) {
           throw "Measure: " + mes + " not defined. :-(";
         }
@@ -275,7 +236,9 @@
       sx = dvl.scale.ordinal({
         name: "scale_x",
         domain: {
-          data: dataX
+          data: data,
+          acc: getX,
+          uniq: true
         },
         rangeFrom: 0,
         rangeTo: panel.width,
@@ -284,15 +247,18 @@
       sy = dvl.scale.ordinal({
         name: "scale_y",
         domain: {
-          data: dataY
+          data: data,
+          acc: getY,
+          uniq: true
         },
         rangeFrom: 0,
         rangeTo: panel.height,
         padding: 10
       });
-      scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale);
+      window.scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale);
       scaledTicksY = dvl.gen.fromArray(sy.ticks, null, sy.scale);
       dvl.debug("sx.ticks", sx.ticks);
+      dvl.debug("sx.scale", sx.scale);
       dvl.debug("scaledTicksX", scaledTicksX);
       dvl.svg.lines({
         panel: panel,
@@ -397,57 +363,28 @@
       keys = dvl.apply({
         args: [data, getX, getY],
         fn: function(ds, x, y) {
-          var i, keyArr, xArr, yArr;
-          xArr = x(ds);
-          yArr = y(ds);
+          var i, k, keyArr;
           i = 0;
           keyArr = [];
-          while (i < xArr.length) {
-            keyArr.push(xArr[i] + "_" + yArr[i]);
+          while (i < ds.length) {
+            k = x(ds[i]) + "_" + y(ds[i]);
+            keyArr.push(k.replace(/[^a-zA-Z]/g, ''));
             i++;
           }
           return keyArr;
         }
       });
+      dvl.debug('keys', keys);
+      dvl.debug("colorScale: ", colorScale);
       dvl.svg.bars({
         panel: panel,
         duration: duration,
         props: {
-          key: keys,
-          centerX: dvl.gen.fromColumnData(data, getX, sx.scale),
-          centerY: dvl.gen.fromColumnData(data, getY, sy.scale),
+          centerX: dvl.gen.fromArray(data, getX, sx.scale),
+          centerY: dvl.gen.fromArray(data, getY, sy.scale),
           width: sizeX,
           height: sizeY,
-          fill: dvl.gen.fromColumnData(data, getV, colorScale)
-        },
-        on: {
-          mousemove: function(i) {
-            var d;
-            d = data.get();
-            highlightX.set(getX.get()(d)[i]);
-            highlightY.set(getY.get()(d)[i]);
-            highlightValue.set(getV.get()(d)[i]);
-            dvl.notify(highlightX, highlightY, highlightValue);
-            return null;
-          },
-          click: function(i) {
-            var d, text, xVal, yVal;
-            if ((onclick != null ? onclick.cell : void 0) != null) {
-              d = data.get()[i];
-              xVal = getX.get()(d);
-              yVal = getY.get()(d);
-              text = sx.ticks.gen()(i);
-              onclick.cell({
-                data: {
-                  x: xVal,
-                  y: yVal
-                },
-                dataItem: d,
-                pos: i
-              });
-            }
-            return null;
-          }
+          fill: dvl.gen.fromArray(data, getV, colorScale)
         }
       });
       dvl.svg.bars({
@@ -480,16 +417,9 @@
         }
       });
       xTitle = dvl.apply({
-        args: [x],
+        args: [val],
         fn: function(xVal) {
-          switch (xVal) {
-            case "affected":
-              return "Affected";
-            case "killed":
-              return "Killed";
-            default:
-              return "you suck";
-          }
+          return "Disaster";
         }
       });
       dvl.svg.labels({
@@ -543,8 +473,6 @@
         getY: getY,
         val: val,
         getV: getV,
-        dataX: dataX,
-        dataY: dataY,
         xTitle: xTitle,
         yTitle: yTitle,
         identifier: "heatmap_" + (heatmap.constructor_count++)
