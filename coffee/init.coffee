@@ -7,8 +7,8 @@ $ ->
   translate[0] = 450
   translate[1] = 285
   xy.translate(translate)
-  chart = d3.select("#canvas")
-            .append("svg:svg")
+  # chart = d3.select("#canvas")
+  #           .append("svg:svg")
   path = d3.geo.path().projection(xy)
   
   

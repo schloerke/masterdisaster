@@ -1,13 +1,12 @@
 (function() {
   $(function() {
-    var allow_increment, chart, collection, increment_time, path, status, timeMax, timeMin, translate, xy;
+    var allow_increment, collection, increment_time, path, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
     translate[0] = 450;
     translate[1] = 285;
     xy.translate(translate);
-    chart = d3.select("#canvas").append("svg:svg");
     path = d3.geo.path().projection(xy);
     timeMin = 1900;
     timeMax = 2010;

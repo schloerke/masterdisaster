@@ -50,102 +50,57 @@ window.heatmap = {
   
   # This essentialy configured the mmx.heatmap
   mesures: {
-    ecpm: 
-      label: 'eCPM (% of top)'
-      prefix: '$'
+    killed: 
+      label: 'Killed'
+      prefix: ''
       postfix: ''
-      numberFormater: (d) -> return d
+      numberFormater: pv.identity
       getScale: (data) ->
         
         # TODO... didn't know how to subset in pv
-        dataTmp = data['ecpm'].slice()
-        for i in [(dataTmp.length-1)..0]
-          if not(dataTmp[i] > 0)
-            dataTmp.splice(i,1)
-            
-        # f = (d) -> return d['ecpm']
+        dataTmp = data.map((d) -> return d.killed)
         f = (d) -> return d
               
         c = pv.Scale.quantile(dataTmp, f).range("#fff", "#4A85B5").quantiles(5)
         c.legendTicks = ->
           l = []
           q = c.quantiles()
-
+          
           for i in [(q.length-2)..0]
             v = (q[i] + q[i+1]) / 2
             l.push {
               value: v
               min: q[i]
               max: q[i+1]
-              text: "$#{ v.toFixed(2) } (#{ (5-i) * 100 / 5 }%)"
+              text: v #"$#{ v.toFixed(2) } (#{ (5-i) * 100 / 5 }%)"
             }
           return l
         c.between = false
         return c
         
-    volume: 
-      label: 'Volume'
+    affected: 
+      label: 'Affected'
       prefix: ''
       postfix: ''
       numberFormater: pv.identity
       getScale: (data) ->
-
-        # TODO... didn't know how to subset in pv
-        dataTmp = data['volume'].slice()
-        for i in [(dataTmp.length-1)..0]
-          if not(dataTmp[i] > 0)
-            dataTmp.splice(i,1)
-
-        # f = (d) -> return (d['volume'] + 1)
-        f = (d) -> return (d + 1)
-        c = pv.Scale.log(dataTmp, f).range("#fff", "#B54A85")
-        c.legendTicks = ->
-          maxImp = pv.max(dataTmp, f)
-          l = []
-          i = 1
-          do_action = ->
-            l.unshift {
-              value: i
-              min: i
-              max: i
-              text: mmx.util.humanize_number(i)
-            }
-            i *= 10
-            
-          # converted 'do loop'
-          do_action()
-          do_action() while(i < maxImp)
-          
-          return l
-        c.between = true
-        return c
         
-    revenue:
-      label: 'Revenue'
-      prefix: '$'
-      postfix: ''
-      numberFormater: (d) -> return d.toFixed(3)
-      getScale: (data) ->
-
         # TODO... didn't know how to subset in pv
-        dataTmp = data['revenue'].slice()
-        for i in [(dataTmp.length-1)..0]
-          if not(dataTmp[i] > 0)
-            dataTmp.splice(i,1)
+        dataTmp = data.map((d) -> return d.killed)
+        f = (d) -> return d
         
-        # f = (d) -> return if d['revenue'] > 0 then d['revenue'] else null
-        f = (d) -> return if d > 0 then d else null
-        c = pv.Scale.quantile(dataTmp, f ).range("#fff", "#854AB5").quantiles(5)
+        c = pv.Scale.quantile(dataTmp, f).range("#fff", "#4A85B5").quantiles(5)
         c.legendTicks = ->
           l = []
           q = c.quantiles()
+          
           for i in [(q.length-2)..0]
             v = (q[i] + q[i+1]) / 2
             l.push {
               value: v
               min: q[i]
               max: q[i+1]
-              text: "$#{ v.toFixed(2) } (#{ (5-i) * 100 / 5 }%)"
+              text: v #"$#{ v.toFixed(2) } (#{ (5-i) * 100 / 5 }%)"
             }
           return l
         c.between = false
@@ -165,7 +120,7 @@ window.heatmap = {
     else
       buttonSelector  = dvl.wrapConstIfNeeded(buttonSelector)
       
-    
+      
     mmx.check.no_def(data,      "data",       "Heatmap")
     mmx.check.no_def(showVals,  "showVals",   "Heatmap")
     mmx.check.no_def(params,    "params",     "Heatmap")
@@ -184,6 +139,7 @@ window.heatmap = {
         else
           return undefined
     }
+    
     y = dvl.apply {
       args: [params, data]
       fn: (p, d) ->
@@ -193,6 +149,7 @@ window.heatmap = {
           return undefined
       
     }
+    
     val = dvl.apply {
       args: [params]
       fn: (p) -> return p.value
@@ -329,6 +286,9 @@ window.heatmap = {
     
     scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale)
     scaledTicksY = dvl.gen.fromArray(sy.ticks, null, sy.scale)
+    
+    dvl.debug "sx.ticks", sx.ticks
+    dvl.debug "scaledTicksX", scaledTicksX
     
     dvl.svg.lines {
       panel:    panel
@@ -574,7 +534,7 @@ window.heatmap = {
       dataY
       xTitle
       yTitle
-      identifier: "heatmap_#{mmx.heatmap.constructor_count++}"
+      identifier: "heatmap_#{heatmap.constructor_count++}"
     }
 
 }

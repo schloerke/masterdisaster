@@ -47,36 +47,31 @@
       return order;
     },
     mesures: {
-      ecpm: {
-        label: 'eCPM (% of top)',
-        prefix: '$',
+      killed: {
+        label: 'Killed',
+        prefix: '',
         postfix: '',
-        numberFormater: function(d) {
-          return d;
-        },
+        numberFormater: pv.identity,
         getScale: function(data) {
-          var c, dataTmp, f, i, _ref;
-          dataTmp = data['ecpm'].slice();
-          for (i = _ref = dataTmp.length - 1; _ref <= 0 ? i <= 0 : i >= 0; _ref <= 0 ? i++ : i--) {
-            if (!(dataTmp[i] > 0)) {
-              dataTmp.splice(i, 1);
-            }
-          }
+          var c, dataTmp, f;
+          dataTmp = data.map(function(d) {
+            return d.killed;
+          });
           f = function(d) {
             return d;
           };
           c = pv.Scale.quantile(dataTmp, f).range("#fff", "#4A85B5").quantiles(5);
           c.legendTicks = function() {
-            var i, l, q, v, _ref2;
+            var i, l, q, v, _ref;
             l = [];
             q = c.quantiles();
-            for (i = _ref2 = q.length - 2; _ref2 <= 0 ? i <= 0 : i >= 0; _ref2 <= 0 ? i++ : i--) {
+            for (i = _ref = q.length - 2; _ref <= 0 ? i <= 0 : i >= 0; _ref <= 0 ? i++ : i--) {
               v = (q[i] + q[i + 1]) / 2;
               l.push({
                 value: v,
                 min: q[i],
                 max: q[i + 1],
-                text: "$" + (v.toFixed(2)) + " (" + ((5 - i) * 100 / 5) + "%)"
+                text: v
               });
             }
             return l;
@@ -85,81 +80,31 @@
           return c;
         }
       },
-      volume: {
-        label: 'Volume',
+      affected: {
+        label: 'Affected',
         prefix: '',
         postfix: '',
         numberFormater: pv.identity,
         getScale: function(data) {
-          var c, dataTmp, f, i, _ref;
-          dataTmp = data['volume'].slice();
-          for (i = _ref = dataTmp.length - 1; _ref <= 0 ? i <= 0 : i >= 0; _ref <= 0 ? i++ : i--) {
-            if (!(dataTmp[i] > 0)) {
-              dataTmp.splice(i, 1);
-            }
-          }
+          var c, dataTmp, f;
+          dataTmp = data.map(function(d) {
+            return d.killed;
+          });
           f = function(d) {
-            return d + 1;
+            return d;
           };
-          c = pv.Scale.log(dataTmp, f).range("#fff", "#B54A85");
+          c = pv.Scale.quantile(dataTmp, f).range("#fff", "#4A85B5").quantiles(5);
           c.legendTicks = function() {
-            var do_action, l, maxImp;
-            maxImp = pv.max(dataTmp, f);
-            l = [];
-            i = 1;
-            do_action = function() {
-              l.unshift({
-                value: i,
-                min: i,
-                max: i,
-                text: mmx.util.humanize_number(i)
-              });
-              return i *= 10;
-            };
-            do_action();
-            while (i < maxImp) {
-              do_action();
-            }
-            return l;
-          };
-          c.between = true;
-          return c;
-        }
-      },
-      revenue: {
-        label: 'Revenue',
-        prefix: '$',
-        postfix: '',
-        numberFormater: function(d) {
-          return d.toFixed(3);
-        },
-        getScale: function(data) {
-          var c, dataTmp, f, i, _ref;
-          dataTmp = data['revenue'].slice();
-          for (i = _ref = dataTmp.length - 1; _ref <= 0 ? i <= 0 : i >= 0; _ref <= 0 ? i++ : i--) {
-            if (!(dataTmp[i] > 0)) {
-              dataTmp.splice(i, 1);
-            }
-          }
-          f = function(d) {
-            if (d > 0) {
-              return d;
-            } else {
-              return null;
-            }
-          };
-          c = pv.Scale.quantile(dataTmp, f).range("#fff", "#854AB5").quantiles(5);
-          c.legendTicks = function() {
-            var i, l, q, v, _ref2;
+            var i, l, q, v, _ref;
             l = [];
             q = c.quantiles();
-            for (i = _ref2 = q.length - 2; _ref2 <= 0 ? i <= 0 : i >= 0; _ref2 <= 0 ? i++ : i--) {
+            for (i = _ref = q.length - 2; _ref <= 0 ? i <= 0 : i >= 0; _ref <= 0 ? i++ : i--) {
               v = (q[i] + q[i + 1]) / 2;
               l.push({
                 value: v,
                 min: q[i],
                 max: q[i + 1],
-                text: "$" + (v.toFixed(2)) + " (" + ((5 - i) * 100 / 5) + "%)"
+                text: v
               });
             }
             return l;
@@ -347,6 +292,8 @@
       });
       scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale);
       scaledTicksY = dvl.gen.fromArray(sy.ticks, null, sy.scale);
+      dvl.debug("sx.ticks", sx.ticks);
+      dvl.debug("scaledTicksX", scaledTicksX);
       dvl.svg.lines({
         panel: panel,
         duration: duration,
@@ -600,7 +547,7 @@
         dataY: dataY,
         xTitle: xTitle,
         yTitle: yTitle,
-        identifier: "heatmap_" + (mmx.heatmap.constructor_count++)
+        identifier: "heatmap_" + (heatmap.constructor_count++)
       };
     }
   };
