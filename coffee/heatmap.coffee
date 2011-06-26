@@ -61,7 +61,7 @@ window.heatmap = {
         dataTmp = data.map((d) -> return d.killed)
         f = (d) -> return d
               
-        c = pv.Scale.quantile(dataTmp, f).range("#fff", "#4A85B5").quantiles(5)
+        c = pv.Scale.quantile(dataTmp, f).range("#fff", "#BC0F00").quantiles(5)
         c.legendTicks = ->
           l = []
           q = c.quantiles()
@@ -89,7 +89,7 @@ window.heatmap = {
         dataTmp = data.map((d) -> return d.killed)
         f = (d) -> return d
         
-        c = pv.Scale.quantile(dataTmp, f).range("#fff", "#663300").quantiles(5)
+        c = pv.Scale.quantile(dataTmp, f).range("#fff", "#3f4c6b").quantiles(5)
         c.legendTicks = ->
           l = []
           q = c.quantiles()
@@ -161,7 +161,7 @@ window.heatmap = {
     labelText   = dvl.def(null, 'label_text')
     legendTicks = dvl.def(null, 'legend_ticks')
     
-    size    = dvl.def({ width: 900, height: 800 }, "size")
+    size    = dvl.def({ width: 1080, height: 800 }, "size")
     margin  = dvl.def({ top: 30, bottom: 170, left: 170, right: 150 }, "margin")
     
     highlightX      = dvl.def(null, 'hightlightX')
