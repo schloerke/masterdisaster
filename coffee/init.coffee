@@ -104,6 +104,7 @@ $ ->
         .enter().append("svg:path")
         .attr("d", path)
         .append("svg:title")
+        .attr("class", "blue")
         .text((d) -> d.properties.name)
       null
   }

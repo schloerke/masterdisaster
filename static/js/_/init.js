@@ -113,7 +113,7 @@
           }
           return _results;
         })();
-        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).append("svg:title").text(function(d) {
+        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).append("svg:title").attr("class", "blue").text(function(d) {
           return d.properties.name;
         });
         return null;
