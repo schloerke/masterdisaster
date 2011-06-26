@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var allow_increment, collection, increment_time, path, status, timeMax, timeMin, translate, xy;
+    var allow_increment, collection, increment_time, maxCountries, maxDisasters, path, status, timeMax, timeMin, translate, xy;
     status = {};
     xy = d3.geo.mercator().scale(1200);
     translate = xy.translate();
@@ -91,7 +91,7 @@
     window.all = dvl.json2({
       url: "/all",
       fn: function(d) {
-        var good, makeDate, obj, ret, row, rows, start, _i, _j, _len, _len2, _name;
+        var good, makeDate, obj, ret, row, rows, seen, start, _i, _j, _len, _len2, _name, _name2;
         makeDate = function(dt) {
           var y;
           dt = "" + dt;
@@ -107,16 +107,22 @@
           obj.push({
             start: start,
             country: row.Country || "Country",
-            killed: row.Killed || 0,
-            affected: row.Affected || 0,
-            type: row.Sub_Type || row.Type
+            killed: row.Killed || 1,
+            affected: row.Affected || 1,
+            type: row.Sub_Type || row.Type,
+            key: "" + (row.Sub_Type || row.Type) + "_" + (row.Country || "Country")
           });
         }
         ret = {};
+        seen = {};
         for (_j = 0, _len2 = obj.length; _j < _len2; _j++) {
           row = obj[_j];
-          ret[_name = row.start] || (ret[_name] = []);
-          ret[row.start].push(row);
+          seen[_name = row.start] || (seen[_name] = {});
+          ret[_name2 = row.start] || (ret[_name2] = []);
+          if (!seen[row.start][row.key]) {
+            seen[row.start][row.key] = true;
+            ret[row.start].push(row);
+          }
         }
         return ret;
       }
@@ -137,6 +143,88 @@
       return t;
       return null;
     };
+    maxCountries = dvl.apply({
+      args: [all],
+      fn: function(al) {
+        var countryObj, k, max, t, tmp, v, year, yearVal, _i, _len;
+        max = {};
+        for (year in al) {
+          yearVal = al[year];
+          for (_i = 0, _len = yearVal.length; _i < _len; _i++) {
+            countryObj = yearVal[_i];
+            if (max[countryObj.country] != null) {
+              max[countryObj.country]++;
+            } else {
+              max[countryObj.country] = 1;
+            }
+          }
+        }
+        t = ((function() {
+          var _results;
+          _results = [];
+          for (k in max) {
+            v = max[k];
+            _results.push({
+              country: k,
+              count: v
+            });
+          }
+          return _results;
+        })()).sort(function(a, b) {
+          return b.count - a.count;
+        });
+        return ((function() {
+          var _j, _len2, _results;
+          _results = [];
+          for (_j = 0, _len2 = t.length; _j < _len2; _j++) {
+            tmp = t[_j];
+            _results.push(tmp.country);
+          }
+          return _results;
+        })()).slice(0, 50);
+      }
+    });
+    maxDisasters = dvl.apply({
+      args: [all],
+      fn: function(al) {
+        var countryObj, k, max, t, tmp, v, year, yearVal, _i, _len;
+        max = {};
+        for (year in al) {
+          yearVal = al[year];
+          for (_i = 0, _len = yearVal.length; _i < _len; _i++) {
+            countryObj = yearVal[_i];
+            if (max[countryObj.type] != null) {
+              max[countryObj.type]++;
+            } else {
+              max[countryObj.type] = 1;
+            }
+          }
+        }
+        t = ((function() {
+          var _results;
+          _results = [];
+          for (k in max) {
+            v = max[k];
+            _results.push({
+              type: k,
+              count: v
+            });
+          }
+          return _results;
+        })()).sort(function(a, b) {
+          return b.count - a.count;
+        });
+        return ((function() {
+          var _j, _len2, _results;
+          _results = [];
+          for (_j = 0, _len2 = t.length; _j < _len2; _j++) {
+            tmp = t[_j];
+            _results.push(tmp.type);
+          }
+          return _results;
+        })()).slice(0, 50);
+      }
+    });
     window.yearAll = dvl.apply({
       args: [all, time],
       fn: function(a, t) {
@@ -154,7 +242,32 @@
       }),
       showVals: ["killed", "affected"],
       metrics: [],
-      verbose: true
+      verbose: true,
+      maxVals: dvl.apply({
+        args: [all],
+        fn: function(al) {
+          var countryObj, max, year, yearVal, _i, _len;
+          max = {
+            killed: 0,
+            affected: 0
+          };
+          for (year in al) {
+            yearVal = al[year];
+            for (_i = 0, _len = yearVal.length; _i < _len; _i++) {
+              countryObj = yearVal[_i];
+              if (countryObj.affected > max.affected) {
+                max.affected = countryObj.affected;
+              }
+              if (countryObj.killed > max.killed) {
+                max.killed = countryObj.killed;
+              }
+            }
+          }
+          return max;
+        }
+      }),
+      maxCountries: maxCountries,
+      maxDisasters: maxDisasters
     });
   });
 }).call(this);

@@ -121,16 +121,21 @@ $ ->
         obj.push {
           start:    start
           country:  row.Country   or "Country"
-          killed:   row.Killed    or 0
-          affected: row.Affected  or 0
+          killed:   row.Killed    or 1
+          affected: row.Affected  or 1
           type:     row.Sub_Type  or row.Type
+          key:      "#{row.Sub_Type  or row.Type}_#{row.Country   or "Country"}"
         }
         
       
       ret = {}
+      seen = {}
       for row in obj
+        seen[row.start] or= {}
         ret[row.start] or= []
-        ret[row.start].push(row)
+        if not seen[row.start][row.key]
+          seen[row.start][row.key] = true
+          ret[row.start].push(row) 
       # 
       return ret
   }
@@ -148,6 +153,63 @@ $ ->
     null
      
   
+  maxCountries = dvl.apply {
+    args: [all]
+    fn: (al) ->
+      max = {}
+      
+      for year, yearVal of al
+        for countryObj in yearVal
+          if max[countryObj.country]?
+            max[countryObj.country]++
+          else
+            max[countryObj.country] = 1
+      
+      t = ({country: k, count: v} for k,v of max).sort((a,b) -> b.count - a.count)
+      
+      return (tmp.country for tmp in t)[0...50]
+  }
+
+  maxDisasters = dvl.apply {
+    args: [all]
+    fn: (al) ->
+      max = {}
+      
+      for year, yearVal of al
+        for countryObj in yearVal
+          if max[countryObj.type]?
+            max[countryObj.type]++
+          else
+            max[countryObj.type] = 1
+      
+      t = ({type: k, count: v} for k,v of max).sort((a,b) -> b.count - a.count)
+      
+      return (tmp.type for tmp in t)[0...50]
+  }
+  
+  # allData = dvl.apply {
+  #   args: [all, maxCountries, maxDisasters]
+  #   fn: (a, mcs, mds) ->
+  #     for year, yearVal of a
+  #       seen = {}
+  #       for countryObj in yearVal
+  #         seen[countryObj.key] = true
+  #         
+  #       for mc in mcs
+  #         for md in mds
+  #           k = "#{md}_#{mc}"
+  #           if not seen[k]
+  #             yearVal.push {
+  #               country: mc
+  #               type: md
+  #               killed:   1
+  #               affected: 1
+  #               key: k
+  #               start: year
+  #             }
+  #     return a
+  # }
+  
   
   
   window.yearAll = dvl.apply {
@@ -158,6 +220,10 @@ $ ->
   
   
   # def: ({graphSelector, buttonSelector, where, data, params, showVals, metrics, onclick, verbose}) ->  
+  
+  
+  
+  
   heatmap.def {
     graphSelector: '#canvas'
     buttonSelector: '#buttons'
@@ -170,6 +236,26 @@ $ ->
     showVals: ["killed", "affected"]
     metrics: []
     verbose: true
+    maxVals: dvl.apply {
+      args: [all]
+      fn: (al) ->
+        
+        max = {
+          killed:   0
+          affected: 0
+        }
+        
+        for year, yearVal of al
+          for countryObj in yearVal
+            if countryObj.affected > max.affected
+              max.affected = countryObj.affected
+            if countryObj.killed > max.killed
+              max.killed = countryObj.killed
+            
+        return max
+    }
+    maxCountries: maxCountries
+    maxDisasters: maxDisasters
   }
 
 

@@ -52,29 +52,21 @@
         prefix: '',
         postfix: '',
         numberFormater: pv.identity,
-        getScale: function(data) {
-          var c, dataTmp, f;
-          dataTmp = data.map(function(d) {
-            return d.killed;
-          });
-          f = function(d) {
-            return d;
-          };
-          c = pv.Scale.quantile(dataTmp, f).range("#fff", "#BC0F00").quantiles(5);
+        getScale: function(data, maxVal) {
+          var c, d;
+          c = pv.Scale.log(1, maxVal).range("#fff", "#BC0F00");
+          d = [5000000, 1000000, 500000, 100000, 50000, 10000, 5000, 1000];
           c.legendTicks = function() {
-            var i, l, q, v, _ref;
-            l = [];
-            q = c.quantiles();
-            for (i = _ref = q.length - 2; _ref <= 0 ? i <= 0 : i >= 0; _ref <= 0 ? i++ : i--) {
-              v = (q[i] + q[i + 1]) / 2;
-              l.push({
-                value: v,
-                min: q[i],
-                max: q[i + 1],
-                text: v
+            var ret, t, _i, _len;
+            ret = [];
+            for (_i = 0, _len = d.length; _i < _len; _i++) {
+              t = d[_i];
+              ret.push({
+                value: t,
+                text: t
               });
             }
-            return l;
+            return ret;
           };
           c.between = false;
           return c;
@@ -85,29 +77,21 @@
         prefix: '',
         postfix: '',
         numberFormater: pv.identity,
-        getScale: function(data) {
-          var c, dataTmp, f;
-          dataTmp = data.map(function(d) {
-            return d.killed;
-          });
-          f = function(d) {
-            return d;
-          };
-          c = pv.Scale.quantile(dataTmp, f).range("#fff", "#3f4c6b").quantiles(5);
+        getScale: function(data, maxVal) {
+          var c, d;
+          c = pv.Scale.log(1, maxVal).range("#fff", "#3f4c6b");
+          d = [125000, 75000, 25000, 12500, 7500, 2500, 1250, 750];
           c.legendTicks = function() {
-            var i, l, q, v, _ref;
-            l = [];
-            q = c.quantiles();
-            for (i = _ref = q.length - 2; _ref <= 0 ? i <= 0 : i >= 0; _ref <= 0 ? i++ : i--) {
-              v = (q[i] + q[i + 1]) / 2;
-              l.push({
-                value: v,
-                min: q[i],
-                max: q[i + 1],
-                text: v
+            var ret, t, _i, _len;
+            ret = [];
+            for (_i = 0, _len = d.length; _i < _len; _i++) {
+              t = d[_i];
+              ret.push({
+                value: t,
+                text: t
               });
             }
-            return l;
+            return ret;
           };
           c.between = false;
           return c;
@@ -116,10 +100,9 @@
     },
     constructor_count: 0,
     def: function(_arg) {
-      var buttonSelector, clusterX, clusterY, colorScale, controls, data, duration, getV, getX, getY, graphSelector, highlightValue, highlightX, highlightY, keys, labelText, legendTicks, margin, onclick, panel, params, scaledTicksY, showVals, size, sizeX, sizeY, sx, sy, updateColorScale, val, verbose, x, xTitle, y, yTitle;
-      graphSelector = _arg.graphSelector, buttonSelector = _arg.buttonSelector, data = _arg.data, params = _arg.params, showVals = _arg.showVals, onclick = _arg.onclick, verbose = _arg.verbose;
+      var buttonSelector, clusterX, clusterY, colorScale, controls, data, duration, getV, getX, getY, graphSelector, highlightValue, highlightX, highlightY, keys, labelText, legendTicks, margin, maxCountries, maxDisasters, maxVals, onclick, panel, params, scaledTicksY, showVals, size, sizeX, sizeY, sx, sy, updateColorScale, val, verbose, x, xTitle, y, yTitle;
+      graphSelector = _arg.graphSelector, buttonSelector = _arg.buttonSelector, data = _arg.data, params = _arg.params, showVals = _arg.showVals, onclick = _arg.onclick, maxVals = _arg.maxVals, maxDisasters = _arg.maxDisasters, maxCountries = _arg.maxCountries, verbose = _arg.verbose;
       verbose || (verbose = false);
-      dvl.debug("data: ", data);
       if (!(buttonSelector != null)) {
         if (verbose) {
           o.log("buttonSelector is not defined... not placing buttons");
@@ -155,7 +138,7 @@
       getX = dvl.acc(x);
       getY = dvl.acc(y);
       getV = dvl.acc(val);
-      duration = 0;
+      duration = 700;
       colorScale = dvl.def(null, 'color_scale');
       labelText = dvl.def(null, 'label_text');
       legendTicks = dvl.def(null, 'legend_ticks');
@@ -190,11 +173,10 @@
         });
       }
       updateColorScale = function() {
-        var ds, m, mes, rawScale;
+        var ds, m, mes, mxVal, rawScale;
         mes = val.get();
         ds = data.get();
-        o.ut(true, "mes: ", mes);
-        o.ut(true, "ds: ", ds);
+        mxVal = maxVals.get();
         if ((!(ds != null)) || (!(mes != null))) {
           return null;
         }
@@ -202,7 +184,7 @@
         if (!(m != null)) {
           throw "Measure: " + mes + " not defined. :-(";
         }
-        rawScale = m.getScale(ds);
+        rawScale = m.getScale(ds, mxVal[mes]);
         colorScale.set(function(d) {
           if (d > 0) {
             return rawScale(d).color;
@@ -215,7 +197,7 @@
       };
       dvl.register({
         fn: updateColorScale,
-        listen: [data, val],
+        listen: [data, val, maxVals],
         change: [colorScale, labelText, legendTicks],
         name: 'color_updater'
       });
@@ -236,8 +218,7 @@
       sx = dvl.scale.ordinal({
         name: "scale_x",
         domain: {
-          data: data,
-          acc: getX,
+          data: maxDisasters,
           uniq: true
         },
         rangeFrom: 0,
@@ -247,8 +228,7 @@
       sy = dvl.scale.ordinal({
         name: "scale_y",
         domain: {
-          data: data,
-          acc: getY,
+          data: maxCountries,
           uniq: true
         },
         rangeFrom: 0,
@@ -257,9 +237,6 @@
       });
       window.scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale);
       scaledTicksY = dvl.gen.fromArray(sy.ticks, null, sy.scale);
-      dvl.debug("sx.ticks", sx.ticks);
-      dvl.debug("sx.scale", sx.scale);
-      dvl.debug("scaledTicksX", scaledTicksX);
       dvl.svg.lines({
         panel: panel,
         duration: duration,
@@ -374,12 +351,11 @@
           return keyArr;
         }
       });
-      dvl.debug('keys', keys);
-      dvl.debug("colorScale: ", colorScale);
       dvl.svg.bars({
         panel: panel,
         duration: duration,
         props: {
+          key: keys,
           centerX: dvl.gen.fromArray(data, getX, sx.scale),
           centerY: dvl.gen.fromArray(data, getY, sy.scale),
           width: sizeX,
