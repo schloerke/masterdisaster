@@ -59,7 +59,7 @@ $ ->
     url: "/map"
   }
  
-  window.gdp = dvl.json2 {
+  gdp = dvl.json2 {
     url: "/gdp"
     fn: (d) ->
       newGdp = {}
@@ -72,7 +72,15 @@ $ ->
         }
       return newGdp
   }
-  
+ 
+  yearData = dvl.apply {
+    args: [gdp, time]
+    fn: (g,t) ->
+      return g[t]
+  }
+
+  dvl.debug "ourdata", yearData
+
   dvl.register {
     listen: [collection]
     fn: ->
