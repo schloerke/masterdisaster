@@ -195,6 +195,17 @@
           dvl.notify(clusterX, clusterY);
           return null;
         });
+        dvl.html.out({
+          selector: "button.heatmap_button",
+          data: clusterX,
+          format: function(cx) {
+            if (cx) {
+              return "cluster on";
+            } else {
+              return "cluster off";
+            }
+          }
+        });
       }
       updateColorScale = function() {
         var ds, m, mes, mxVal, rawScale;

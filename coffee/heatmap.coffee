@@ -221,6 +221,16 @@ window.heatmap = {
           dvl.notify(clusterX, clusterY)
           null
         )
+      
+      dvl.html.out {
+        selector: "button.heatmap_button"
+        data: clusterX
+        format: (cx) ->
+          if cx
+            return "cluster on"
+          else
+            return "cluster off"
+      }
     
     # Legend
     updateColorScale = () ->

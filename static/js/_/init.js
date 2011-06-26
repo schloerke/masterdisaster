@@ -301,7 +301,7 @@
         return ret;
       }
     });
-    ht = heatmap.def({
+    return ht = heatmap.def({
       graphSelector: '#canvas',
       buttonSelector: '#buttons',
       data: yearAll,
@@ -340,17 +340,6 @@
       maxDisasters: maxDisasters,
       clusterCountries: clusY,
       clusterDisasters: clusX
-    });
-    return dvl.html.out({
-      selector: '#toggleOnOff',
-      data: ht.clusterX,
-      format: function(d) {
-        if (d) {
-          return "ON";
-        } else {
-          return "OFF";
-        }
-      }
     });
   });
 }).call(this);

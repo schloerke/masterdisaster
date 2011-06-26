@@ -322,17 +322,6 @@ $ ->
     clusterDisasters: clusX
   }
   
-  dvl.html.out {
-    selector: '#toggleOnOff'
-    data: ht.clusterX
-    format: (d) ->
-      return if d
-        "ON"
-      else
-        "OFF"
-        
-  }
-
 
 
 
