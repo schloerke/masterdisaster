@@ -115,12 +115,9 @@ window.heatmap = {
   
   constructor_count: 0
   
-  def: ({graphSelector, buttonSelector, data, params, showVals, onclick, maxVals, verbose}) ->  
-    dvl.debug "maxVals: ", maxVals
+  def: ({graphSelector, buttonSelector, data, params, showVals, onclick, maxVals, maxDisasters, maxCountries, verbose}) ->  
     
     verbose or= false
-    
-    dvl.debug "data: ", data
     
     # mmx.check.no_def(graphSelector, "graphSelector", "Heatmap")
     if not buttonSelector?
@@ -161,7 +158,7 @@ window.heatmap = {
     getX = dvl.acc(x)
     getY = dvl.acc(y)
     getV = dvl.acc(val)
-    duration = 0 #100
+    duration = 700
     
     colorScale  = dvl.def(null, 'color_scale')
     labelText   = dvl.def(null, 'label_text')
@@ -205,10 +202,6 @@ window.heatmap = {
       ds = data.get()
       mxVal = maxVals.get()
       
-      o.ut(true, "mes: ", mes)
-      o.ut(true, "ds: ", ds)
-      
-      
       return null if (not ds?) or (not mes?)
       m = heatmap.mesures[mes]
       if not m?
@@ -243,7 +236,7 @@ window.heatmap = {
     
     sx = dvl.scale.ordinal {
       name: "scale_x"
-      domain: { data: data, acc: getX, uniq: true }
+      domain: { data: maxDisasters, uniq: true }
       rangeFrom: 0
       rangeTo: panel.width
       padding: 10
@@ -251,7 +244,7 @@ window.heatmap = {
     
     sy = dvl.scale.ordinal {
       name: "scale_y"
-      domain: { data: data, acc: getY, uniq: true }
+      domain: { data: maxCountries, uniq: true }
       rangeFrom: 0
       rangeTo: panel.height
       padding: 10
@@ -259,10 +252,6 @@ window.heatmap = {
     
     window.scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale)
     scaledTicksY = dvl.gen.fromArray(sy.ticks, null, sy.scale)
-    
-    dvl.debug "sx.ticks", sx.ticks
-    dvl.debug "sx.scale", sx.scale
-    dvl.debug "scaledTicksX", scaledTicksX
     
     dvl.svg.lines {
       panel:    panel
@@ -370,14 +359,11 @@ window.heatmap = {
           
         return keyArr
     }
-    dvl.debug 'keys', keys
-    
-    dvl.debug "colorScale: ", colorScale
     dvl.svg.bars {
       panel: panel
       duration: duration
       props:
-        # key:      keys
+        key:      keys
         centerX:  dvl.gen.fromArray(data, getX, sx.scale)
         centerY:  dvl.gen.fromArray(data, getY, sy.scale)
         width:    sizeX

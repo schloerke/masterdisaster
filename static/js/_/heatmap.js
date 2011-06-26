@@ -100,11 +100,9 @@
     },
     constructor_count: 0,
     def: function(_arg) {
-      var buttonSelector, clusterX, clusterY, colorScale, controls, data, duration, getV, getX, getY, graphSelector, highlightValue, highlightX, highlightY, keys, labelText, legendTicks, margin, maxVals, onclick, panel, params, scaledTicksY, showVals, size, sizeX, sizeY, sx, sy, updateColorScale, val, verbose, x, xTitle, y, yTitle;
-      graphSelector = _arg.graphSelector, buttonSelector = _arg.buttonSelector, data = _arg.data, params = _arg.params, showVals = _arg.showVals, onclick = _arg.onclick, maxVals = _arg.maxVals, verbose = _arg.verbose;
-      dvl.debug("maxVals: ", maxVals);
+      var buttonSelector, clusterX, clusterY, colorScale, controls, data, duration, getV, getX, getY, graphSelector, highlightValue, highlightX, highlightY, keys, labelText, legendTicks, margin, maxCountries, maxDisasters, maxVals, onclick, panel, params, scaledTicksY, showVals, size, sizeX, sizeY, sx, sy, updateColorScale, val, verbose, x, xTitle, y, yTitle;
+      graphSelector = _arg.graphSelector, buttonSelector = _arg.buttonSelector, data = _arg.data, params = _arg.params, showVals = _arg.showVals, onclick = _arg.onclick, maxVals = _arg.maxVals, maxDisasters = _arg.maxDisasters, maxCountries = _arg.maxCountries, verbose = _arg.verbose;
       verbose || (verbose = false);
-      dvl.debug("data: ", data);
       if (!(buttonSelector != null)) {
         if (verbose) {
           o.log("buttonSelector is not defined... not placing buttons");
@@ -140,7 +138,7 @@
       getX = dvl.acc(x);
       getY = dvl.acc(y);
       getV = dvl.acc(val);
-      duration = 0;
+      duration = 700;
       colorScale = dvl.def(null, 'color_scale');
       labelText = dvl.def(null, 'label_text');
       legendTicks = dvl.def(null, 'legend_ticks');
@@ -179,8 +177,6 @@
         mes = val.get();
         ds = data.get();
         mxVal = maxVals.get();
-        o.ut(true, "mes: ", mes);
-        o.ut(true, "ds: ", ds);
         if ((!(ds != null)) || (!(mes != null))) {
           return null;
         }
@@ -222,8 +218,7 @@
       sx = dvl.scale.ordinal({
         name: "scale_x",
         domain: {
-          data: data,
-          acc: getX,
+          data: maxDisasters,
           uniq: true
         },
         rangeFrom: 0,
@@ -233,8 +228,7 @@
       sy = dvl.scale.ordinal({
         name: "scale_y",
         domain: {
-          data: data,
-          acc: getY,
+          data: maxCountries,
           uniq: true
         },
         rangeFrom: 0,
@@ -243,9 +237,6 @@
       });
       window.scaledTicksX = dvl.gen.fromArray(sx.ticks, null, sx.scale);
       scaledTicksY = dvl.gen.fromArray(sy.ticks, null, sy.scale);
-      dvl.debug("sx.ticks", sx.ticks);
-      dvl.debug("sx.scale", sx.scale);
-      dvl.debug("scaledTicksX", scaledTicksX);
       dvl.svg.lines({
         panel: panel,
         duration: duration,
@@ -360,12 +351,11 @@
           return keyArr;
         }
       });
-      dvl.debug('keys', keys);
-      dvl.debug("colorScale: ", colorScale);
       dvl.svg.bars({
         panel: panel,
         duration: duration,
         props: {
+          key: keys,
           centerX: dvl.gen.fromArray(data, getX, sx.scale),
           centerY: dvl.gen.fromArray(data, getY, sy.scale),
           width: sizeX,
