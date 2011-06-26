@@ -94,7 +94,7 @@
         return g[t];
       }
     });
-    window.all = dvl.json2({
+    window.allt = dvl.json2({
       url: "/all",
       fn: function(d) {
         var good, makeDate, obj, ret, row, rows, seen, start, _i, _j, _len, _len2, _name, _name2;
@@ -132,6 +132,41 @@
           }
         }
         return ret;
+      }
+    });
+    window.all = dvl.apply({
+      args: allt,
+      fn: function(as) {
+        var found, k, newCountryVal, nowCountryVal, nowYearVal, prevCountryVal, prevYearVal, v, year, _i, _j, _len, _len2;
+        for (year = 1900; year <= 2010; year++) {
+          nowYearVal = as[year];
+          prevYearVal = as[year - 1];
+          if ((prevYearVal != null) && nowYearVal) {
+            for (_i = 0, _len = prevYearVal.length; _i < _len; _i++) {
+              prevCountryVal = prevYearVal[_i];
+              found = false;
+              for (_j = 0, _len2 = nowYearVal.length; _j < _len2; _j++) {
+                nowCountryVal = nowYearVal[_j];
+                if (nowCountryVal.country === prevCountryVal.country) {
+                  found = true;
+                  nowCountryVal.killed = nowCountryVal.killed;
+                }
+              }
+              if (!found) {
+                newCountryVal = {};
+                for (k in prevCountryVal) {
+                  v = prevCountryVal[k];
+                  newCountryVal[k] = v;
+                }
+                newCountryVal.killed = newCountryVal.killed * 0.00001;
+                newCountryVal.cost = newCountryVal.cost * 0.00001;
+                newCountryVal.affected = newCountryVal.affected * 0.00001;
+                nowYearVal.push(newCountryVal);
+              }
+            }
+          }
+        }
+        return as;
       }
     });
     window.get_all = function() {

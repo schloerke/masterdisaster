@@ -98,7 +98,7 @@ $ ->
   }
   
   
-  window.all = dvl.json2 {
+  window.allt = dvl.json2 {
     url: "/all"
     fn: (d) ->
       
@@ -139,6 +139,34 @@ $ ->
           ret[row.start].push(row) 
       # 
       return ret
+  }
+  
+  window.all = dvl.apply {
+    args: allt
+    fn: (as) ->
+      
+      for year in [1900..2010]
+        nowYearVal  = as[year]
+        prevYearVal = as[year - 1]
+        if prevYearVal? and nowYearVal
+          for prevCountryVal in prevYearVal
+            found = false
+            for nowCountryVal in nowYearVal
+              if nowCountryVal.country is prevCountryVal.country
+                found = true
+                nowCountryVal.killed = nowCountryVal.killed# + prevCountryVal.killed * 0.001
+            if not found
+              newCountryVal ={}
+              for k,v of prevCountryVal
+                newCountryVal[k] = v
+              newCountryVal.killed = newCountryVal.killed * 0.00001
+              newCountryVal.cost = newCountryVal.cost * 0.00001
+              newCountryVal.affected = newCountryVal.affected * 0.00001
+              nowYearVal.push(newCountryVal)
+              
+      
+      return as
+      
   }
   
   window.get_all = ->

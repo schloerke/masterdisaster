@@ -54,7 +54,7 @@
         numberFormater: pv.identity,
         getScale: function(data, maxVal) {
           var c, d;
-          c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404");
+          c = pv.Scale.log(1, maxVal).range("white", "#31A354");
           d = [300000000, 150000000, 75000000, 10000000, 2500000, 50000, 5000, 1000];
           c.legendTicks = function() {
             var ret, t, u, _i, _len;

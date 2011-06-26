@@ -57,7 +57,7 @@ window.heatmap = {
       numberFormater: pv.identity
       getScale: (data, maxVal) ->
         
-        c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404")
+        c = pv.Scale.log(1, maxVal).range("white", "#31A354")
         d = [
           300000000
           150000000
