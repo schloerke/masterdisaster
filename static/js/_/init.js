@@ -80,6 +80,7 @@
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               feature = _ref[_i];
               if (country === feature.properties.name) {
+                countryval.svgObj = feature;
                 break;
               }
             }
@@ -111,7 +112,7 @@
           }
           return _results;
         })();
-        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).append("svg:title").text(function(d) {
+        chart.selectAll("path").data(svgs).enter().append("svg:path").attr("d", path).append("svg:title").attr("class", "blue").text(function(d) {
           return d.properties.name;
         });
         return null;

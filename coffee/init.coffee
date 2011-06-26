@@ -80,6 +80,7 @@ $ ->
         for country,countryval of val
           for feature in col.features
             if country is feature.properties.name
+              countryval.svgObj = feature
               break
       return g
   }
@@ -101,6 +102,7 @@ $ ->
         .enter().append("svg:path")
         .attr("d", path)
         .append("svg:title")
+        .attr("class", "blue")
         .text((d) -> d.properties.name)
       null
   }
