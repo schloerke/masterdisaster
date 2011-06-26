@@ -13,7 +13,7 @@ $ ->
   
   
   
-  timeMin = 1950
+  timeMin = 1900
   timeMax = 2010
   window.time = dvl.def(timeMin, "time")
   allow_increment = dvl.def(false, "allow_increment")
@@ -41,7 +41,19 @@ $ ->
   window.pause = ->
     status.interval = clearInterval(status.interval)
     null
-    
+  
+  $("#scale").slider {
+    min:    timeMin
+    max:    timeMax
+    value:  500
+    step:   1
+    slide:  (event, ui) ->
+      time.set(ui.value).notify()
+  }
+
+  $("#play").click( -> play())
+  $("#pause").click( -> pause())
+  
   dvl.register {
     listen: [time]
     fn: ->
@@ -99,19 +111,28 @@ $ ->
       rows = d.rows
       
       good = 0
+      obj = []
       for row in rows
         # o.ut(true, "row: ", row)
         # 
         # o.ut(true, "row.End: ", row.End)
         # row.endYear = makeDate(row.End)
-        row.startYear = makeDate(row.Start)
+        # row.startYear = makeDate(row.Start)
+        start = makeDate(row.Start)
+        obj.push {
+          start:    start
+          country:  row.Country
+          killed:   row.Killed
+          affected: row.Affected or 0
+          type:     row.Sub_Type or row.Type
+        }
         
-      ret = {}
-      for row in rows
-        if row.startYear >= 1950
-          ret[row.startYear] or= []
-          ret[row.startYear].push(row)
       
+      ret = {}
+      for row in obj
+        ret[row.start] or= []
+        ret[row.start].push(row)
+      # 
       return ret
   }
   
@@ -129,20 +150,15 @@ $ ->
      
   
   
-  
-  
-
-
-
-  $("#scale").slider {
-    min:    timeMin
-    max:    timeMax
-    value:  500
-    step:   1
-    slide:  (event, ui) ->
-      time.set(ui.value).notify()
+  window.yearAll = dvl.apply {
+    args: [all, time]
+    fn: (a, t)->
+      return a[t]
   }
+  
+  
+  
 
-  $("#play").click( -> play())
-  $("#pause").click( -> pause())
+
+
 

@@ -9,7 +9,7 @@
     xy.translate(translate);
     chart = d3.select("#canvas").append("svg:svg");
     path = d3.geo.path().projection(xy);
-    timeMin = 1950;
+    timeMin = 1900;
     timeMax = 2010;
     window.time = dvl.def(timeMin, "time");
     allow_increment = dvl.def(false, "allow_increment");
@@ -38,6 +38,21 @@
       status.interval = clearInterval(status.interval);
       return null;
     };
+    $("#scale").slider({
+      min: timeMin,
+      max: timeMax,
+      value: 500,
+      step: 1,
+      slide: function(event, ui) {
+        return time.set(ui.value).notify();
+      }
+    });
+    $("#play").click(function() {
+      return play();
+    });
+    $("#pause").click(function() {
+      return pause();
+    });
     dvl.register({
       listen: [time],
       fn: function() {
@@ -77,7 +92,7 @@
     window.all = dvl.json2({
       url: "/all",
       fn: function(d) {
-        var good, makeDate, ret, row, rows, _i, _j, _len, _len2, _name;
+        var good, makeDate, obj, ret, row, rows, start, _i, _j, _len, _len2, _name;
         makeDate = function(dt) {
           var y;
           dt = "" + dt;
@@ -86,17 +101,23 @@
         };
         rows = d.rows;
         good = 0;
+        obj = [];
         for (_i = 0, _len = rows.length; _i < _len; _i++) {
           row = rows[_i];
-          row.startYear = makeDate(row.Start);
+          start = makeDate(row.Start);
+          obj.push({
+            start: start,
+            country: row.Country,
+            killed: row.Killed,
+            affected: row.Affected || 0,
+            type: row.Sub_Type || row.Type
+          });
         }
         ret = {};
-        for (_j = 0, _len2 = rows.length; _j < _len2; _j++) {
-          row = rows[_j];
-          if (row.startYear >= 1950) {
-            ret[_name = row.startYear] || (ret[_name] = []);
-            ret[row.startYear].push(row);
-          }
+        for (_j = 0, _len2 = obj.length; _j < _len2; _j++) {
+          row = obj[_j];
+          ret[_name = row.start] || (ret[_name] = []);
+          ret[row.start].push(row);
         }
         return ret;
       }
@@ -117,20 +138,11 @@
       return t;
       return null;
     };
-    $("#scale").slider({
-      min: timeMin,
-      max: timeMax,
-      value: 500,
-      step: 1,
-      slide: function(event, ui) {
-        return time.set(ui.value).notify();
+    return window.yearAll = dvl.apply({
+      args: [all, time],
+      fn: function(a, t) {
+        return a[t];
       }
-    });
-    $("#play").click(function() {
-      return play();
-    });
-    return $("#pause").click(function() {
-      return pause();
     });
   });
 }).call(this);
