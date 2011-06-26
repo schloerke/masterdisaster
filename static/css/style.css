@@ -90,10 +90,12 @@ color:#666;
 button.killed.active {
 background:#C47777;
 }
-
 button.affected.active {
   background: #848CA0;
 }
 button.cost.active {
 background: #64BA7E;
+}
+svg rect {
+opacity:.9
 }
