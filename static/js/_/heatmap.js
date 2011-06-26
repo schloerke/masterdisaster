@@ -57,15 +57,13 @@
           c = pv.Scale.log(1, maxVal).range("white", "#31A354");
           d = [300000000, 150000000, 75000000, 10000000, 2500000, 50000, 5000, 1000];
           c.legendTicks = function() {
-            var ret, t, u, _i, _len;
+            var ret, t, _i, _len;
             ret = [];
             for (_i = 0, _len = d.length; _i < _len; _i++) {
               t = d[_i];
-              u = t.toString();
-              u = u.substring(0, u.length - 3) + "k";
               ret.push({
                 value: t,
-                text: u
+                text: t
               });
             }
             return ret;
@@ -84,15 +82,13 @@
           c = pv.Scale.log(1, maxVal).range("#FC625D", "#2D0404");
           d = [5000000, 1000000, 500000, 100000, 50000, 10000, 5000, 1000];
           c.legendTicks = function() {
-            var ret, t, u, _i, _len;
+            var ret, t, _i, _len;
             ret = [];
             for (_i = 0, _len = d.length; _i < _len; _i++) {
               t = d[_i];
-              u = t.toString();
-              u = u.substring(0, u.length - 3) + "k";
               ret.push({
                 value: t,
-                text: u
+                text: t
               });
             }
             return ret;
@@ -374,7 +370,6 @@
             if (b[v] < 1) {
               b[v] = 1;
             }
-            console.log(b[v]);
             k.push(Math.log(b[v]) * 3.5);
           }
           return k;
@@ -437,8 +432,8 @@
           top: dvl.gen.fromFn(function(i) {
             return 200 + i * 24;
           }),
-          width: 20,
-          height: 20,
+          width: 15,
+          height: 15,
           fill: dvl.gen.fromArray(legendTicks, dvl.acc('value'), colorScale),
           stroke: "none"
         }
@@ -453,7 +448,7 @@
             return 200 + 12 + i * 24;
           }),
           width: 10,
-          height: 10,
+          height: 15,
           text: dvl.gen.fromArray(legendTicks, dvl.acc('text'))
         }
       });
@@ -477,7 +472,7 @@
           text: xTitle,
           baseline: "top",
           align: "middle",
-          color: "#666"
+          color: "#ccc"
         }
       });
       yTitle = dvl.def("Country");
@@ -496,7 +491,7 @@
           baseline: "middle",
           align: "right",
           angle: -90,
-          color: "#666"
+          color: "#ccc"
         }
       });
       return {

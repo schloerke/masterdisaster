@@ -71,11 +71,9 @@ window.heatmap = {
         c.legendTicks = ->
           ret = []
           for t in d
-            u = t.toString()
-            u = u.substring(0,u.length-3) + "k"
             ret.push {
               value: t
-              text: u
+              text: t
             }
             
           return ret
@@ -103,11 +101,9 @@ window.heatmap = {
         c.legendTicks = ->
           ret = []
           for t in d
-            u = t.toString()
-            u = u.substring(0,u.length-3) + "k"
             ret.push {
               value: t
-              text: u
+              text: t
             }
             
           return ret
@@ -420,7 +416,6 @@ window.heatmap = {
         for b in bs
           if b[v] < 1
             b[v] = 1
-          console.log b[v]
           k.push(Math.log(b[v])*3.5)
         return k
     }
@@ -501,8 +496,8 @@ window.heatmap = {
       props:
         right: -40
         top: dvl.gen.fromFn((i) -> 200+i*24 )
-        width: 20
-        height: 20
+        width: 15
+        height: 15
         fill: dvl.gen.fromArray(legendTicks, dvl.acc('value'), colorScale)
         stroke: "none"
     }
@@ -515,7 +510,7 @@ window.heatmap = {
         right: -50
         top: dvl.gen.fromFn((i) -> 200+12+i*24 )
         width: 10
-        height: 10
+        height: 15
         text: dvl.gen.fromArray(legendTicks, dvl.acc('text'))
     }
     
@@ -541,7 +536,7 @@ window.heatmap = {
         baseline: "top"
         align: "middle"
         # angle: 45
-        color: "#666"
+        color: "#ccc"
     }
 
     # Y Title
@@ -561,7 +556,7 @@ window.heatmap = {
         baseline: "middle"
         align: "right"
         angle: -90
-        color: "#666"
+        color: "#ccc"
     }
     
     

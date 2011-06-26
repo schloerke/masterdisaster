@@ -67,7 +67,7 @@ margin:5px 10px;
       fill:#efefef;
       display:block;}
     svg.heatmap .lines{shape-rendering:crispEdges;}
-    .heatmap_button{margin-left:10px;}
+    .heatmap_button{margin-left:3px;}
 .heatmap_x_title,.heatmap_y_title{
 font-size:12px;
 text-transform:uppercase;
@@ -84,11 +84,16 @@ g.heatmap_x_title .labels, g.heatmap_y_title .labels {
   font-family:arial,sans-serif;
   fill:#666;
 }
-
-button.killed {
+#buttons span {
+color:#666;
+}
+button.killed.active {
 background:#C47777;
 }
 
-button.affected {
+button.affected.active {
   background: #848CA0;
+}
+button.cost.active {
+background: #64BA7E;
 }
