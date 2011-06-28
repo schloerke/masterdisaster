@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html>
+  <head>
+    <title>A DISASTER STRUCK</title>
+    <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <script type="text/javascript" src="/js/jq/jquery-1.4.4.js"></script>
+    <script type="text/javascript" src="/js/jq/jquery-ui-1.8.10.custom.min.js"></script>
+    <script type="text/javascript" src="/js/utils/o.js"></script>
+    <script type="text/javascript" src="/js/dvl/d3.js"></script>
+    <script type="text/javascript" src="/js/dvl/d3.geo.js"></script>
+    <script type="text/javascript" src="/js/dvl/protovis-r3.2.js"></script>
+    <script type="text/javascript" src="/js/dvl/sprintf.js"></script>
+    <script type="text/javascript" src="/js/dvl/dvl.js"></script>
+    <script type="text/javascript" src="/js/figue.js"></script>
+    <script type="text/javascript" src="/js/_/heatmap.js"></script>
+    <script type="text/javascript" src="/js/_/init.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header style="position:relative;">
+        <h1>Disaster Strikes</h1>
+        <h2>A World in Sight</h2>
+        <div style="clear:both"></div>
+        <span class="label fleft">now viewing those:</span><div id="buttons"></div>
+        <div id="toggleOnOff"></div>
+        <div id="scale_label">1950</div> 
+        <div style="clear:both"></div>
+        <div class="credits">
+          <span class="object">Masters_Of_Disasters = {</span>
+            <div>
+              <span class="keyvalue"><a href="http://afinepoint.com/" target="_blank">Ed Fine</a></span>: <span class="label"><a href="http://twitter.com/#!/afinefellow" target="_blank">@afinefellow</a></span>
+            </div>
+            <div>
+              <span class="keyvalue"><a href="http://metamarketsgroup.com/blog/the-rise-of-dynamic-data-visualization/" target="_blank">Barret Schloerke</a></span>: <span class="label"><a href="http://twitter.com/#!/schloerke" target="_blank">@schloerke</a></span>
+          </div>
+          <div>
+            <span class="keyvalue"><a href="http://www.mbecicadesign.com" target="_blank">Mary Becica</a></span>: <span class="label"><a href="http://twitter.com/#!/mbecica">@mbecica</a></span>
+          </div>
+          <div>
+            <span class="keyvalue"><a href="http://www.presentcomplex.com" target="_blank">Marianna Anderle</a></span>: <span class="label"><a href="http://twitter.com/#!/andrly" target="_blank">@andrly</a></span>
+          </div>
+          <div>
+            <span class="keyvalue"><a href="http://www.linkedin.com/pub/norman-klein/5/480/99b" target="_blank">Norman Klein</a></span>: <span class="label"><a href="http://www.manning.com/klein/" target="_blank">Laszlo in Action</a></span>
+          </div>
+          <span class='object'>}</span>
+        </div>
+        
+      </header>
+      <div id="canvas">
+      </div>
+      <footer>
+        <section>
+          <span class="label fleft">t:</span> 
+          <div id="scale"></div>
+          <button id="play">Go</button>
+          <button id="pause">Pause</button>
+        </section>
+      </footer>
+        
+  </body>
+</html>

@@ -4,13 +4,15 @@ font-family:"Arial", "Helvetica", sans-serif;
 margin:0;
 background:#f2f2f2;
 }
-label {
+.label {
 font-size:12px;
-float:left;
 font-family:"Georgia", "Times new roman", serif;
 font-style:italic;
 line-height:24px;
 margin-right:8px;
+}
+.fleft {
+  float:left;
 }
 h1 {
 text-transform:uppercase;
@@ -108,4 +110,30 @@ background: #64BA7E;
 }
 svg rect {
 opacity:.9
+}
+
+.keyvalue {
+  margin-left: 1.5em;
+}
+
+.keyvalue, .object {
+/*  margin-top: 0.1em;*/
+  
+  text-transform: uppercase;
+  color: #666;
+  font-weight: normal;
+}
+
+
+.credits {
+  font-size: 10px;
+  line-height: 10px;
+  
+  position: absolute;
+  right: -210px;
+  width: 200px;
+  top: 7px;
+} 
+.credits div {
+  height: 15px;
 }
