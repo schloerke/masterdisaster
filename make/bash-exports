@@ -60,7 +60,3 @@ coffee_all() {
 }
 coffee_all
 
-s() {
-  clear
-  node app.js
-}
