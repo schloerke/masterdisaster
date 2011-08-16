@@ -65,7 +65,7 @@
     });
   };
   allt = dvl.json2({
-    url: "/all",
+    url: "/data/all.json",
     fn: function(d) {
       var good, makeDate, obj, ret, row, rows, seen, start, t, _i, _j, _len, _len2, _name, _name2;
       makeDate = function(dt) {

@@ -95,7 +95,7 @@ window.pause = ->
 
 
 allt = dvl.json2 {
-  url: "/all"
+  url: "/data/all.json"
   fn: (d) ->
     
     makeDate = (dt) ->

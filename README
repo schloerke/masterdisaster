@@ -5,5 +5,5 @@ Install Node
 Setup env
     source make/bash-exports
     
-Start server
-    s # s... for start!
+Open File
+    ./site/index.html

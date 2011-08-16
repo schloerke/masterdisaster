@@ -24,11 +24,6 @@ while read name version flags; do
 done <<EOF
 
   coffee-script   1.1.1
-  colors          0.5.0
-  ejs             0.4.2
-  express         2.3.10
-  forever         0.5.6
-  tav             0.1.0
   
 
 EOF
